@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# fluxbox startup-script:
+#
+# Lines starting with a '#' are ignored.
+
+# Change your keymap:
+xmodmap "/home/thadeu/.Xmodmap"
+
+# Applications you want to run with fluxbox.
+# MAKE SURE THAT APPS THAT KEEP RUNNING HAVE AN ''&'' AT THE END.
+#
+# unclutter -idle 2 &
+# wmnd &
+# wmsmixer -w &
+# idesk &
+xset -b &
+easystroke &
+setxkbmap -model abnt2 -layout br &
+feh --randomize --bg-fill ~/.fluxbox/backgrounds/ &
+xscreensaver -no-splash &
+conky -p 2 -d&
+xbindkeys &
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
+# And last but not least we start fluxbox.
+# Because it is the last app you have to run it with ''exec'' before it.
+
+exec fluxbox
+# or if you want to keep a log:
+# exec fluxbox -log "/home/thadeu/.fluxbox/log"

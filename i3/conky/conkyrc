@@ -1,0 +1,25 @@
+conky.config = {
+out_to_x = false,
+own_window = false,
+out_to_console = true,
+background = false,
+max_text_width = 0,
+update_interval = 2.0,
+total_run_times = 0,
+override_utf8_locale = true
+}
+
+conky.text = [[
+
+[{ "full_text" : "HD" , "color" : "\#7996a9" } ,
+ { "full_text" : "home: ${fs_free /home}/${fs_size /home}  root: ${fs_free /}/${fs_size /}" } , 
+ { "full_text" : "Ram" , "color" : "\#b492b6" } ,
+ { "full_text" : "${mem}" },
+ { "full_text" : "Wifi" , "color" : "\#b72f62" } ,
+ { "full_text" : "${wireless_essid wlan0}(${wireless_link_qual wlan0}/${wireless_link_qual_max wlan0})" } ,
+ { "full_text" : "Bat" , "color" : "\#7996a9" } ,
+ { "full_text" : "${battery BAT1}" , "color" : 
+  ${if_match ${battery_percent BAT1}<20}"\#b95670"${else}"\#5f5f5f"${endif} } ,
+ { "full_text" : "Fecha" , "color" : "\#b492b6" } , 
+ { "full_text" : "${time %b %d %Y %I:%M%P}" }]  ,
+ ]]
