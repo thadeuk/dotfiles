@@ -141,6 +141,12 @@ nnoremap <silent> <C-PageDown> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
 nnoremap <silent> <C-PageUp> :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
 nnoremap <S-Tab> <<
 inoremap <S-Tab> <C-d>
+
+inoremap <expr> <TAB> pumvisible() ? "\<C-y>" : "\<CR>"
+inoremap <expr> <Esc> pumvisible() ? "\<C-e>" : "\<Esc>"
+inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<Down>"
+inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<Up>"
+
 nmap <silent> <C-t><C-n> :TestNearest<CR>
 nmap <silent> <C-t><C-f> :TestFile<CR>
 nmap <silent> <C-t><C-s> :TestSuite<CR>
