@@ -60,7 +60,6 @@ syntax enable
 call plug#begin()
 
 Plug 'skywind3000/asyncrun.vim'
-Plug 'puremourning/vimspector' " Debugger
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " Auto completion
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -83,6 +82,8 @@ Plug 'tpope/vim-rhubarb' " Git blame in browser
 Plug 'tpope/vim-sleuth' " Automatically adjusts identation level
 Plug 'vim-test/vim-test'
 Plug 'wakatime/vim-wakatime' " Time tracking
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'ctrlpvim/ctrlp.vim'
 
 call plug#end()
 
