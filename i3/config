@@ -282,6 +282,7 @@ exec --no-startup-id pasytray
 exec --no-startup-id xautolock -time 10 -locker lock
 exec --no-startup-id udiskie
 exec --no-startup-id autotiling
+exec --no-startup-id flameshot
 #disable beep
 exec --no-startup-id xset -b
 
