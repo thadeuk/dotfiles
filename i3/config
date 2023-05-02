@@ -241,7 +241,7 @@ client.background       #F8F8F2
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-  status_command i3status -c /home/thadeu/.config/i3/i3status.conf
+  status_command i3status -c ~/.config/i3/i3status.conf
   # i3bar_command $HOME/.config/polybar/launch.sh --cuts
   # status_command i3blocks -c /home/thadeu/.config/i3/i3blocks.conf
   # status_command /home/thadeu/.config/i3/conky/i3status.sh
@@ -251,25 +251,16 @@ bar {
   separator_symbol "❰"
   tray_output primary
   colors {
-    background #282A36
-    statusline #F8F8F2
-    separator  #44475A
+        background #2f343f
+        statusline #2f343f
+        separator #4b5262
 
-    focused_workspace  #44475A #44475A #F8F8F2
-    active_workspace   #282A36 #44475A #F8F8F2
-    inactive_workspace #282A36 #282A36 #BFBFBF
-    urgent_workspace   #FF5555 #FF5555 #F8F8F2
-    binding_mode       #FF5555 #FF5555 #F8F8F2
-  }
-
-        # colors {
-          # background $bg-color
-	  # separator #757575
-		# #                  border             background         text
-		# focused_workspace  $bg-color          $bg-color          $text-color
-		# inactive_workspace $inactive-bg-color $inactive-bg-color $inactive-text-color
-		# urgent_workspace   $urgent-bg-color   $urgent-bg-color   $text-color
-	# }
+        # colour of border, background, and text
+        focused_workspace       #2f343f #bf616a #d8dee8
+        active_workspace        #2f343f #2f343f #d8dee8
+        inactive_workspace      #2f343f #2f343f #d8dee8
+        urgent_workspacei       #2f343f #ebcb8b #2f343f
+    }
 }
 
 bindsym $mod+Ctrl+l exec /bin/lock
