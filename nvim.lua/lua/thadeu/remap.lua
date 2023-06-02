@@ -22,10 +22,10 @@ vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
-vim.keymap.set("n", "<C-Left>", ":tabprevious <CR>")
-vim.keymap.set("n", "<C-Right>", ":tabnext <CR>")
-vim.keymap.set("n", "<C-PageDow>fn>", ":execute 'silent! tabmove ' . (tabpagenr()-2)<CR>")
-vim.keymap.set("n", "<C-PageUp>", ":execute 'silent! tabmove ' . (tabpagenr()+1)<CR>")
+-- vim.keymap.set("n", "<C-Left>", ":tabprevious <CR>")
+-- vim.keymap.set("n", "<C-Right>", ":tabnext <CR>")
+-- vim.keymap.set("n", "<C-PageDow>fn>", ":execute 'silent! tabmove ' . (tabpagenr()-2)<CR>")
+-- vim.keymap.set("n", "<C-PageUp>", ":execute 'silent! tabmove ' . (tabpagenr()+1)<CR>")
 
 vim.keymap.set("n", "<C-]>", '<cmd>tab split | lua vim.lsp.buf.definition()<CR>')
 

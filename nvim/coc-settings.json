@@ -1,5 +1,3 @@
 {
-  "coc.preferences.jumpCommand": "tab drop",
-  "coc.preferences.formatOnSaveFiletypes": ["javascript", "typescript"],
-  "javascript.format.enabled": true
+  "coc.preferences.formatOnSaveFiletypes": ["javascript", "typescript"]
 }

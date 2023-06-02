@@ -1,0 +1,5 @@
+vim.keymap.set("n", "<C-t><C-n>", vim.cmd.TestNearest)
+vim.keymap.set("n", "<C-t><C-f>", vim.cmd.TestFile)
+vim.keymap.set("n", "<C-t><C-s>", vim.cmd.TestSuite)
+vim.keymap.set("n", "<C-t><C-l>", vim.cmd.TestLast)
+vim.keymap.set("n", "<C-t><C-g>", vim.cmd.TestVisit)

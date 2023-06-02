@@ -10,7 +10,8 @@ require("neo-tree").setup({
 				require("neo-tree").close_all()
 			end
 		},
-	}
+	},
+  respect_buf_cwd = true,
 })
 
 vim.cmd([[nnoremap <C-e> :Neotree float <cr>]])

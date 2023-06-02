@@ -50,6 +50,8 @@ return require('packer').startup(function(use)
 		{'hrsh7th/nvim-cmp'},     -- Required
 		{'hrsh7th/cmp-nvim-lsp'}, -- Required
 		{'L3MON4D3/LuaSnip'},     -- Required
+
+    {'jose-elias-alvarez/null-ls.nvim'}, -- Optional
 	}
 }
 
@@ -102,5 +104,7 @@ use {
         require('Comment').setup()
     end
 }
+
+use("vim-test/vim-test")
 
 end)

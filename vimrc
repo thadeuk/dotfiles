@@ -13,12 +13,15 @@ runtime! debian.vim
 " NOTE: debian.vim sets 'nocompatible'.  Setting 'compatible' changes numerous
 " options, so any other options should be set AFTER setting 'compatible'.
 "set compatible
+if has('nvim')
+  set t_8f=␛[38;2;%lu;%lu;%lum
+  set t_8b=␛[48;2;%lu;%lu;%lum
+  set termguicolors
+endif
 
 " Vim5 and later versions support syntax highlighting. Uncommenting the next
 " line enables syntax highlighting by default.
-if has("syntax")
-  syntax on
-endif
+syntax on
 
 " If using a dark background within the editing area and syntax highlighting
 " turn on this option as well
@@ -69,8 +72,9 @@ Plug 'preservim/nerdcommenter'
 Plug 'preservim/nerdtree'
 Plug 'leafgarland/typescript-vim'
 Plug 'jreybert/vimagit'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
 Plug 'ntpeters/vim-better-whitespace' " Highlight trailing whitespaces
 Plug 'tpope/vim-dispatch' " Async tool
 Plug 'tpope/vim-fugitive' " Useful for git blame
@@ -84,13 +88,17 @@ Plug 'vim-test/vim-test'
 Plug 'wakatime/vim-wakatime' " Time tracking
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'ap/vim-css-color'
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+Plug 'romainl/Apprentice'
+Plug 'jonathanfilip/vim-lucius'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+Plug 'ellisonleao/gruvbox.nvim'
 
 call plug#end()
 
-
-
-
 execute pathogen#infect()
+
 set t_Co=256
 
 map <F1> :make<CR>
@@ -103,16 +111,15 @@ map <S-Enter> O<ESC>
 
 set runtimepath+=~/.vim/bundle/jshint2.vim/
 
-"let g:lucius_style='dark'
-"let g:lucius_contrast='normal'
-"let g:lucius_contrast_bg='low'
-"colorscheme lucius
+"set background=dark
 "let g:solarized_termcolors=256
 "let g:solarized_menu=1
-"let g:solarized_contrast="normal"
-set background=dark
-"colorscheme solarized
+"let g:solarized_contrast="light"
+"colorscheme tokyonight-storm
+"colorscheme apprentice
+"colorscheme dracula
 colorscheme PaperColor
+"colorscheme gruvbox
 
 set foldmethod=indent
 set foldlevel=5
@@ -120,18 +127,17 @@ set foldlevel=5
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_concepts_highlight = 1
-"colorscheme apprentice
 let NERDTreeIgnore = ['\.o$','\.depends$']
 let NERDTreeQuitOnOpen=1
 let NERDSpaceDelims=1
 let g:gitgutter_async=0
-let g:gitgutter_sign_added = '✚'
+"let g:gitgutter_sign_added = '✚'
 let g:gitgutter_sign_modified = '❱'
 let g:gitgutter_sign_removed = '❌'
 let g:gitgutter_sign_removed_first_line = '^'
 let g:gitgutter_sign_modified_removed = '❰'
-let g:ctrlp_custom_ignore = 'node_modules|git'
-set wildignore+=*/.git/*,*/node_modules
+let g:ctrlp_custom_ignore = 'node_modules|git|dist'
+set wildignore+=*/.git/*,*/node_modules,*/dist
 let test#strategy = "asyncrun_background_term"
 
 "Tab config
@@ -198,20 +204,6 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-" YouCompleteMe ----------------------
-"
-" let g:ycm_autoclose_preview_window_after_insertion = 1
-" let g:ycm_autoclose_preview_window_after_completion = 1
-" let g:ycm_confirm_extra_conf = 0
-" let g:ycm_enable_diagnostic_highlighting = 1
-" let g:ycm_warning_symbol = '##'
-" let g:ycm_global_ycm_extra_conf = '~/.vim/ycm_extra_conf.py'
-" let g:ycm_goto_buffer_command='new-or-existing-tab'
-" nnoremap <C-]> :YcmCompleter GoTo<CR>
-" nnoremap <Leader>f :YcmCompleter FixIt<CR>
-" nnoremap <Leader>r :YcmCompleter RefactorRename<Space>
-
 
 " ALE ---------------------------------
 "
