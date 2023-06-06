@@ -31,7 +31,7 @@ font pango:iosevka Nerd Font 10
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal -d $(xcwd)
+bindsym $mod+Return exec termite
 
 # kill focused window
         bindsym $mod+Shift+q kill
@@ -238,7 +238,7 @@ bar {
         status_command i3status -c ~/.config/i3/i3status.conf
                 position top
                 workspace_buttons yes
-                font pango:iosevka Nerd Font 10
+                font pango:Iosevka Nerd Font 9
                 separator_symbol "❰"
                 tray_output primary
                 colors {
@@ -256,11 +256,11 @@ bindsym $mod+n exec pcmanfm
 bindsym $mod+Shift+p move workspace to output left
 bindsym $mod+Tab workspace back_and_forth
 
+exec --no-startup-id ~/dotfiles/resolution.sh
 exec --no-startup-id picom -b
 ##exec --no-startup-id feh --randomize --bg-fill ~/Images/Backgrounds/
 exec --no-startup-id feh --bg-fill /home/thadeu/Images/Backgrounds/giau_pass_italy_alps_118374_2560x1080.jpg
-exec --no-startup-id setxkbmap -model abnt2 -layout br
-exec --no-startup-id /lib/xfce4/notifyd/xfce4-notifyd
+exec --no-startup-id dunst
 exec --no-startup-id blueman-applet
 exec --no-startup-id nm-applet --indicator
 exec --no-startup-id pasytray
