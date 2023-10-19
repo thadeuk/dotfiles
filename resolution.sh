@@ -7,3 +7,5 @@ xrandr --addmode eDP1 "1920x1200_60.00"
 xrandr --addmode eDP1 "2560x1600_60.00"
 
 xrandr --output eDP1 --primary --mode 1920x1200_60.00
+
+feh --bg-fill ~/dotfiles/Backgrounds/switzerland_alps_mountains_night_beautiful_landscape_99817_3840x2400.jpg

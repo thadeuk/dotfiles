@@ -238,7 +238,7 @@ bar {
         status_command i3status -c ~/.config/i3/i3status.conf
                 position top
                 workspace_buttons yes
-                font pango:Iosevka Nerd Font 9
+                font pango:Iosevka Nerd Font 10
                 separator_symbol "❰"
                 tray_output primary
                 colors {
@@ -248,7 +248,7 @@ bar {
                 }
 }
 
-bindsym $mod+Ctrl+l exec /bin/lock
+bindsym $mod+Ctrl+l exec ~/dotfiles/lock
 bindsym $mod+c exec chromium
 bindsym $mod+n exec pcmanfm
 
@@ -259,15 +259,14 @@ bindsym $mod+Tab workspace back_and_forth
 exec --no-startup-id ~/dotfiles/resolution.sh
 exec --no-startup-id picom -b
 ##exec --no-startup-id feh --randomize --bg-fill ~/Images/Backgrounds/
-exec --no-startup-id feh --bg-fill /home/thadeu/Images/Backgrounds/giau_pass_italy_alps_118374_2560x1080.jpg
 exec --no-startup-id dunst
 exec --no-startup-id blueman-applet
 exec --no-startup-id nm-applet --indicator
 exec --no-startup-id pasytray
 exec --no-startup-id xautolock -time 10 -locker lock
-exec --no-startup-id udiskie
 exec --no-startup-id autotiling
 exec --no-startup-id flameshot
+exec --no-startup-id setxkbmap us --variant intl
 #disable beep
 exec --no-startup-id xset -b
 
