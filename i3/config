@@ -263,13 +263,15 @@ exec --no-startup-id picom -b
 exec --no-startup-id dunst
 exec --no-startup-id blueman-applet
 exec --no-startup-id nm-applet --indicator
-exec --no-startup-id pasytray
-exec --no-startup-id xautolock -time 10 -locker lock
+exec --no-startup-id pasystray
 exec --no-startup-id autotiling
 exec --no-startup-id flameshot
+
 exec --no-startup-id setxkbmap us -variant intl
 #disable beep
 exec --no-startup-id xset -b
+#set keyboard repeat rate
+exec --no-startup-id xset r rate 300 50
 
 for_window [class="Pavucontrol"] floating enable
 for_window [class="Transmission-gtk"] floating enable
