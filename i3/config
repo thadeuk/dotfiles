@@ -216,8 +216,9 @@ gaps outer 0
 bindsym XF86AudioRaiseVolume exec --no-startup-id i3-volume -n up 5
 bindsym XF86AudioLowerVolume exec --no-startup-id i3-volume -n down 5
 bindsym XF86AudioMute exec --no-startup-id i3-volume -n mute
-bindsym XF86MonBrightnessUp exec xbacklight + 10 && notify-send -t 500 -i display-brightness-symbolic "$(printf '%.0f' $(xbacklight -get))"
-bindsym XF86MonBrightnessDown exec xbacklight - 10 && notify-send -t 500 -i display-brightness-symbolic "$(printf '%.0f' $(xbacklight -get))"
+bindsym XF86MonBrightnessUp exec ~/.config/i3/adjust_brightness.sh up
+bindsym XF86MonBrightnessDown exec ~/.config/i3/adjust_brightness.sh down
+
 
 # client.focused          $bg-color          $bg-color          $text-color          #00ff00
 # client.unfocused        $inactive-bg-color $inactive-bg-color $inactive-text-color #00ff00
@@ -266,7 +267,7 @@ exec --no-startup-id pasytray
 exec --no-startup-id xautolock -time 10 -locker lock
 exec --no-startup-id autotiling
 exec --no-startup-id flameshot
-exec --no-startup-id setxkbmap us --variant intl
+exec --no-startup-id setxkbmap us -variant intl
 #disable beep
 exec --no-startup-id xset -b
 

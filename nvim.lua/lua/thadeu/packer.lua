@@ -8,8 +8,7 @@ return require('packer').startup(function(use)
 	use 'wbthomason/packer.nvim'
 
 	use {
-		'nvim-telescope/telescope.nvim', tag = '0.1.4',
-		-- or                            , branch = '0.1.x',
+		'nvim-telescope/telescope.nvim',
 		requires = { {'nvim-lua/plenary.nvim'} }
 	}
 
@@ -17,7 +16,6 @@ return require('packer').startup(function(use)
 
 	use {
 		"nvim-neo-tree/neo-tree.nvim",
-		branch = "v2.x",
 		requires = { 
 			"nvim-lua/plenary.nvim",
 			"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
@@ -29,7 +27,6 @@ return require('packer').startup(function(use)
 
 	use {
 		'VonHeikemen/lsp-zero.nvim',
-		branch = 'v2.x',
 		requires = {
 			-- LSP Support
 			{'neovim/nvim-lspconfig'},             -- Required
