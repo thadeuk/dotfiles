@@ -95,5 +95,6 @@ return require('packer').startup(function(use)
 
 	use 'wakatime/vim-wakatime'
 
+	use 'f-person/git-blame.nvim'
 
 end)
