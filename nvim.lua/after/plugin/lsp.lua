@@ -1,6 +1,6 @@
 local lsp = require("lsp-zero").preset({})
 
-lsp.setup_servers({'tsserver','eslint'})
+lsp.setup_servers({'ts_ls','eslint'})
 
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
