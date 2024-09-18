@@ -14,5 +14,5 @@ require("neo-tree").setup({
   respect_buf_cwd = true,
 })
 
-vim.cmd([[nnoremap <C-e> :Neotree float <cr>]])
+vim.cmd([[nnoremap <C-e> :Neotree float reveal <cr>]])
 vim.cmd([[nnoremap <C-g> :Neotree float git_status <cr>]])
