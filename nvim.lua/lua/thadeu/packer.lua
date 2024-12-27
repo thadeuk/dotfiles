@@ -97,12 +97,11 @@ return require('packer').startup(function(use)
 
 	use 'f-person/git-blame.nvim'
 
-  use {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    branch = 'canary',
+  use({
+    "kdheepak/lazygit.nvim",
+    -- optional for floating window border decoration
     requires = {
-      { "github/copilot.vim" }, -- or github/copilot.vim
-      { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
-    }
-  }
+        "nvim-lua/plenary.nvim",
+    },
+  })
 end)

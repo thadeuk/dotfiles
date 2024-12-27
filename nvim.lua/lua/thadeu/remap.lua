@@ -29,3 +29,8 @@ vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><
 
 vim.keymap.set("n", "<C-]>", '<cmd>tab split | lua vim.lsp.buf.definition()<CR>')
 
+vim.keymap.set("n", "<leader>gg", ":LazyGit<CR>")
+
+vim.keymap.set("n", "<leader>qf", function()
+    vim.lsp.buf.code_action({ only = { "quickfix" } })
+end, { noremap = true, silent = true, desc = "Quick Fix" })

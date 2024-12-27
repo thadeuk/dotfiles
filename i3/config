@@ -31,7 +31,7 @@ font pango:iosevka Nerd Font 10
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec termite
+bindsym $mod+Return exec termite -d "$(xcwd)"
 
 # kill focused window
         bindsym $mod+Shift+q kill
@@ -250,7 +250,7 @@ bar {
 }
 
 bindsym $mod+Ctrl+l exec ~/dotfiles/lock
-bindsym $mod+c exec chromium
+bindsym $mod+c exec __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia google-chrome-stable 
 bindsym $mod+n exec pcmanfm
 
 #bindsym $mod+p move workspace to output right
@@ -262,7 +262,7 @@ exec --no-startup-id picom -b
 ##exec --no-startup-id feh --randomize --bg-fill ~/Images/Backgrounds/
 exec --no-startup-id dunst
 exec --no-startup-id blueman-applet
-exec --no-startup-id nm-applet --indicator
+exec --no-startup-id nm-applet
 exec --no-startup-id pasystray
 exec --no-startup-id autotiling
 exec --no-startup-id flameshot
