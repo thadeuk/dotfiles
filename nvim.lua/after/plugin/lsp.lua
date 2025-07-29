@@ -1,6 +1,6 @@
 local lsp = require("lsp-zero").preset({})
 
-lsp.setup_servers({'ts_ls','eslint'})
+lsp.setup_servers({'ts_ls','eslint', 'pyright', 'dartls', 'jsonls', 'dockerls', 'bashls', 'yamlls', 'html', 'cssls', 'lua_ls'})
 
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
@@ -47,6 +47,16 @@ lsp.on_attach(function(client, bufnr)
   lsp.default_keymaps({buffer = bufnr})
   lsp.buffer_autoformat()
 end)
+
+lsp.configure('pyright', {
+  settings = {
+    python = {
+      analysis = {
+        pythonPath = vim.fn.expand("./venv/bin/python"),
+      }
+    }
+  }
+})
 
 lsp.setup()
 
