@@ -26,3 +26,9 @@ vim.keymap.set('n', '<C-f>', function()
     },
   })
 end)
+
+-- Telescope git keybindings
+vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = "Git status (modified files)" })
+vim.keymap.set('n', '<leader>gc', builtin.git_commits, { desc = "Git commits (full history)" })
+vim.keymap.set('n', '<leader>gb', builtin.git_branches, { desc = "Git branches" })
+vim.keymap.set('n', '<leader>gl', builtin.git_bcommits, { desc = "Git log (current file)" })

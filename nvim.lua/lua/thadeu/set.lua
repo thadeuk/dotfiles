@@ -28,3 +28,5 @@ vim.opt.isfname:append("@-@")
 vim.opt.updatetime = 50
 
 vim.env.NVIM_LISTEN_ADDRESS = "/tmp/nvim"
+vim.env.EDITOR = "nvim"
+vim.env.VISUAL = "nvim"

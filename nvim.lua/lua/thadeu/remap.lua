@@ -14,7 +14,7 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
 -- next greatest remap ever : asbjornHaland
-vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
 vim.keymap.set("n", "<leader>Y", [["+Y]])
 
 vim.keymap.set("n", "Q", "<nop>")
@@ -32,5 +32,13 @@ vim.keymap.set("n", "<C-]>", '<cmd>tab split | lua vim.lsp.buf.definition()<CR>'
 vim.keymap.set("n", "<leader>gg", ":LazyGit<CR>")
 
 vim.keymap.set("n", "<leader>qf", function()
-    vim.lsp.buf.code_action({ only = { "quickfix" } })
+  vim.lsp.buf.code_action({ only = { "quickfix" } })
 end, { noremap = true, silent = true, desc = "Quick Fix" })
+
+-- Git keybindings
+vim.keymap.set("n", "<leader>gd", ":Gdiffsplit<CR>") -- Diff current file
+vim.keymap.set("n", "<leader>gh", ":Gitsigns preview_hunk<CR>")
+vim.keymap.set("n", "<leader>gp", ":Gitsigns stage_hunk<CR>")
+vim.keymap.set("n", "<leader>gu", ":Gitsigns undo_stage_hunk<CR>")
+vim.keymap.set("n", "]g", ":Gitsigns next_hunk<CR>")
+vim.keymap.set("n", "[g", ":Gitsigns prev_hunk<CR>")
