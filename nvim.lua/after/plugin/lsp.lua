@@ -1,65 +1,81 @@
-local lsp = require("lsp-zero").preset({})
+local ok_cmp, cmp = pcall(require, 'cmp')
+if ok_cmp then
+  cmp.setup({
+    snippet = {
+      expand = function(args)
+        local ok_snip, luasnip = pcall(require, 'luasnip')
+        if ok_snip then
+          luasnip.lsp_expand(args.body)
+        end
+      end,
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-p>'] = cmp.mapping.select_prev_item(),
+      ['<C-n>'] = cmp.mapping.select_next_item(),
+      ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+      ['<C-Space>'] = cmp.mapping.complete(),
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'buffer' },
+    }),
+  })
+end
 
-lsp.setup_servers({'ts_ls','eslint', 'pyright', 'dartls', 'jsonls', 'dockerls', 'bashls', 'yamlls', 'html', 'cssls', 'lua_ls'})
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+local ok_cmp_lsp, cmp_lsp = pcall(require, 'cmp_nvim_lsp')
+if ok_cmp_lsp then
+  capabilities = cmp_lsp.default_capabilities(capabilities)
+end
 
-local cmp = require('cmp')
-local cmp_select = {behavior = cmp.SelectBehavior.Select}
-local cmp_mappings = lsp.defaults.cmp_mappings({
-  ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-  ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-  ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-  ["<C-Space>"] = cmp.mapping.complete(),
+local servers = {
+  ts_ls = {},
+  eslint = {},
+  pyright = {},
+  dartls = {},
+  jsonls = {},
+  dockerls = {},
+  bashls = {},
+  yamlls = {},
+  html = {},
+  cssls = {},
+  lua_ls = {
+    settings = {
+      Lua = {
+        diagnostics = { globals = { 'vim' } },
+        workspace = { checkThirdParty = false },
+        telemetry = { enable = false },
+      },
+    },
+  },
+}
+
+for name, config in pairs(servers) do
+  local merged = vim.tbl_deep_extend('force', { capabilities = capabilities }, config)
+  vim.lsp.config(name, merged)
+  vim.lsp.enable(name)
+end
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(event)
+    local opts = { buffer = event.buf, silent = true, noremap = true }
+    local map = function(mode, lhs, rhs)
+      vim.keymap.set(mode, lhs, rhs, opts)
+    end
+
+    map('n', 'gd', vim.lsp.buf.definition)
+    map('n', 'K', vim.lsp.buf.hover)
+    map('n', '<leader>vws', vim.lsp.buf.workspace_symbol)
+    map('n', '<leader>vd', vim.diagnostic.open_float)
+    map('n', '[d', vim.diagnostic.goto_next)
+    map('n', ']d', vim.diagnostic.goto_prev)
+    map('n', '<leader>vca', vim.lsp.buf.code_action)
+    map('n', '<leader>vrr', vim.lsp.buf.references)
+    map('n', '<leader>vrn', vim.lsp.buf.rename)
+    map('i', '<C-h>', vim.lsp.buf.signature_help)
+  end,
 })
-
-cmp_mappings['<Tab>'] = nil
-cmp_mappings['<S-Tab>'] = nil
-
-lsp.setup_nvim_cmp({
-  mapping = cmp_mappings
-})
-
-lsp.set_preferences({
-    suggest_lsp_servers = false,
-    sign_icons = {
-        error = 'E',
-        warn = 'W',
-        hint = 'H',
-        info = 'I'
-    }
-})
-
-lsp.on_attach(function(client, bufnr)
-  local opts = {buffer = bufnr, remap = false}
-
-  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-  vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
-  vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-  vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-  vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
-  vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-  vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
-end)
-
-lsp.on_attach(function(client, bufnr)
-  lsp.default_keymaps({buffer = bufnr})
-  lsp.buffer_autoformat()
-end)
-
-lsp.configure('pyright', {
-  settings = {
-    python = {
-      analysis = {
-        pythonPath = vim.fn.expand("./venv/bin/python"),
-      }
-    }
-  }
-})
-
-lsp.setup()
 
 vim.diagnostic.config({
-    virtual_text = true
+  virtual_text = true,
 })
