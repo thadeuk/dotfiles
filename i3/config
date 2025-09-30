@@ -280,9 +280,7 @@ for_window [window_role="pop-up"] floating enable
 for_window [class="(?i)mplayer"] floating enable
 for_window [class="(?i)gpicview"] floating enable
 
-
 # fix graphics glitch
-new_window none
 for_window [class=(?i)termite] border pixel 3
 
 for_window [window_role="pop-up"] floating enable
