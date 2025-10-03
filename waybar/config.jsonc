@@ -8,7 +8,8 @@
     "height": 42,
     "modules-left": [
         "clock",
-        "custom/weather",
+        "custom/weather-current",
+        "custom/weather-rouen",
         "custom/moon",
         "hyprland/workspaces"
     ],
@@ -37,11 +38,18 @@
     "hyprland/window": {
         "format": "{}"
     },
-    "custom/weather": {
+    "custom/weather-current": {
         "tooltip": true,
         "format": "{}",
         "interval": 3600,
-        "exec": "~/.config/waybar/scripts/waybar-wttr.py",
+        "exec": "~/.config/waybar/scripts/weather-current.py",
+        "return-type": "json"
+    },
+    "custom/weather-rouen": {
+        "tooltip": true,
+        "format": "{}",
+        "interval": 3600,
+        "exec": "~/.config/waybar/scripts/weather-rouen.py",
         "return-type": "json"
     },
     "custom/moon": {

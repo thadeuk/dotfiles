@@ -51,7 +51,8 @@ tooltip {
 
 #custom-tlp,
 #custom-power_profile,
-#custom-weather,
+#custom-weather-current,
+#custom-weather-rouen,
 #custom-moon,
 #custom-wallpaper,
 #cpu,
@@ -186,4 +187,23 @@ tooltip {
 #custom-tlp.bperf  { border: 1px solid rgba(140,140,255,0.5); }
 #custom-tlp.bpower { border: 1px solid rgba(255,170, 80,0.6); }
 #custom-tlp.power  { border: 1px solid rgba(255,120,120,0.7); }
+
+/* Weather modules styling */
+#custom-weather-current {
+    color: #f9e2af;
+    border-left: 0px;
+    border-right: 0px;
+}
+
+#custom-weather-rouen {
+    color: #89dceb;
+    border-left: 0px;
+    border-right: 0px;
+}
+
+#custom-moon {
+    color: #cdd6f4;
+    border-radius: 0px 10px 10px 0px;
+    border-left: 0px;
+}
 

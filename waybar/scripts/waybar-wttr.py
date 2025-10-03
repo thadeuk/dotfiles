@@ -1,120 +1,131 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
 import json
-import requests
-from datetime import datetime
+import urllib.request
+import urllib.error
 
-WEATHER_CODES = {
-    '113': '☀️ ',
-    '116': '⛅ ',
-    '119': '☁️ ',
-    '122': '☁️ ',
-    '143': '☁️ ',
-    '176': '🌧️',
-    '179': '🌧️',
-    '182': '🌧️',
-    '185': '🌧️',
-    '200': '⛈️ ',
-    '227': '🌨️',
-    '230': '🌨️',
-    '248': '☁️ ',
-    '260': '☁️ ',
-    '263': '🌧️',
-    '266': '🌧️',
-    '281': '🌧️',
-    '284': '🌧️',
-    '293': '🌧️',
-    '296': '🌧️',
-    '299': '🌧️',
-    '302': '🌧️',
-    '305': '🌧️',
-    '308': '🌧️',
-    '311': '🌧️',
-    '314': '🌧️',
-    '317': '🌧️',
-    '320': '🌨️',
-    '323': '🌨️',
-    '326': '🌨️',
-    '329': '❄️ ',
-    '332': '❄️ ',
-    '335': '❄️ ',
-    '338': '❄️ ',
-    '350': '🌧️',
-    '353': '🌧️',
-    '356': '🌧️',
-    '359': '🌧️',
-    '362': '🌧️',
-    '365': '🌧️',
-    '368': '🌧️',
-    '371': '❄️',
-    '374': '🌨️',
-    '377': '🌨️',
-    '386': '🌨️',
-    '389': '🌨️',
-    '392': '🌧️',
-    '395': '❄️ '
-}
+CITIES = [
+    {"name": "Chiang Mai", "code": "ChiangMai,Thailand"},
+    {"name": "Rouen", "code": "Rouen,France"}
+]
 
-data = {}
+def get_weather(city_code):
+    try:
+        url = f"http://wttr.in/{city_code}?format=j1"
+        with urllib.request.urlopen(url, timeout=5) as response:
+            return json.loads(response.read().decode())
+    except (urllib.error.URLError, urllib.error.HTTPError, Exception):
+        return None
 
-city = "Railay"
+def format_weather(data):
+    if not data:
+        return None
 
-weather = requests.get("https://wttr.in/Railay?format=j1").json()
+    current = data.get("current_condition", [{}])[0]
+    temp_c = current.get("temp_C", "?")
+    feels_like = current.get("FeelsLikeC", "?")
+    desc = current.get("weatherDesc", [{}])[0].get("value", "Unknown")
+    humidity = current.get("humidity", "?")
 
+    weather_code = current.get("weatherCode", "113")
+    icon = get_weather_icon(weather_code)
 
-def format_time(time):
-    return time.replace("00", "").zfill(2)
-
-
-def format_temp(temp):
-    return (hour['FeelsLikeC']+"°").ljust(3)
-
-
-def format_chances(hour):
-    chances = {
-        "chanceoffog": "Fog",
-        "chanceoffrost": "Frost",
-        "chanceofovercast": "Overcast",
-        "chanceofrain": "Rain",
-        "chanceofsnow": "Snow",
-        "chanceofsunshine": "Sunshine",
-        "chanceofthunder": "Thunder",
-        "chanceofwindy": "Wind"
+    return {
+        "temp": temp_c,
+        "feels": feels_like,
+        "desc": desc,
+        "humidity": humidity,
+        "icon": icon
     }
 
-    conditions = []
-    for event in chances.keys():
-        if int(hour[event]) > 0:
-            conditions.append(chances[event]+" "+hour[event]+"%")
-    return ", ".join(conditions)
+def get_weather_icon(code):
+    code = str(code)
+    icons = {
+        "113": "☀️",  # Clear/Sunny
+        "116": "⛅",  # Partly cloudy
+        "119": "☁️",  # Cloudy
+        "122": "☁️",  # Overcast
+        "143": "🌫️",  # Mist
+        "176": "🌦️",  # Patchy rain possible
+        "179": "🌨️",  # Patchy snow possible
+        "182": "🌧️",  # Patchy sleet possible
+        "185": "🌧️",  # Patchy freezing drizzle
+        "200": "⛈️",  # Thundery outbreaks
+        "227": "🌨️",  # Blowing snow
+        "230": "❄️",  # Blizzard
+        "248": "🌫️",  # Fog
+        "260": "🌫️",  # Freezing fog
+        "263": "🌦️",  # Patchy light drizzle
+        "266": "🌧️",  # Light drizzle
+        "281": "🌧️",  # Freezing drizzle
+        "284": "🌧️",  # Heavy freezing drizzle
+        "293": "🌦️",  # Patchy light rain
+        "296": "🌧️",  # Light rain
+        "299": "🌧️",  # Moderate rain at times
+        "302": "🌧️",  # Moderate rain
+        "305": "🌧️",  # Heavy rain at times
+        "308": "🌧️",  # Heavy rain
+        "311": "🌧️",  # Light freezing rain
+        "314": "🌧️",  # Moderate or heavy freezing rain
+        "317": "🌨️",  # Light sleet
+        "320": "🌨️",  # Moderate or heavy sleet
+        "323": "🌨️",  # Patchy light snow
+        "326": "🌨️",  # Light snow
+        "329": "🌨️",  # Patchy moderate snow
+        "332": "🌨️",  # Moderate snow
+        "335": "❄️",  # Patchy heavy snow
+        "338": "❄️",  # Heavy snow
+        "350": "🌧️",  # Ice pellets
+        "353": "🌦️",  # Light rain shower
+        "356": "🌧️",  # Moderate or heavy rain shower
+        "359": "🌧️",  # Torrential rain shower
+        "362": "🌨️",  # Light sleet showers
+        "365": "🌨️",  # Moderate or heavy sleet showers
+        "368": "🌨️",  # Light snow showers
+        "371": "❄️",  # Moderate or heavy snow showers
+        "374": "🌧️",  # Light showers of ice pellets
+        "377": "🌧️",  # Moderate or heavy showers of ice pellets
+        "386": "⛈️",  # Patchy light rain with thunder
+        "389": "⛈️",  # Moderate or heavy rain with thunder
+        "392": "⛈️",  # Patchy light snow with thunder
+        "395": "⛈️",  # Moderate or heavy snow with thunder
+    }
+    return icons.get(code, "🌡️")
 
-tempint = int(weather['current_condition'][0]['FeelsLikeC'])
-extrachar = ''
-if tempint > 0 and tempint < 10:
-    extrachar = '+'
+def main():
+    weather_data = []
 
+    for city in CITIES:
+        data = get_weather(city["code"])
+        weather = format_weather(data)
+        if weather:
+            weather_data.append({
+                "name": city["name"],
+                **weather
+            })
 
-data['text'] = ' '+WEATHER_CODES[weather['current_condition'][0]['weatherCode']] + \
-    " "+extrachar+weather['current_condition'][0]['FeelsLikeC']+"°C"
+    if not weather_data:
+        output = {
+            "text": "❌",
+            "tooltip": "Weather data unavailable"
+        }
+    else:
+        text_parts = []
+        tooltip_lines = []
 
-data['tooltip'] = f"<b>{weather['current_condition'][0]['weatherDesc'][0]['value']} {weather['current_condition'][0]['temp_C']}°</b>\n"
-data['tooltip'] += f"Feels like: {weather['current_condition'][0]['FeelsLikeC']}°\n"
-data['tooltip'] += f"Wind: {weather['current_condition'][0]['windspeedKmph']}Km/h\n"
-data['tooltip'] += f"Humidity: {weather['current_condition'][0]['humidity']}%\n"
-for i, day in enumerate(weather['weather']):
-    data['tooltip'] += f"\n<b>"
-    if i == 0:
-        data['tooltip'] += "Today, "
-    if i == 1:
-        data['tooltip'] += "Tomorrow, "
-    data['tooltip'] += f"{day['date']}</b>\n"
-    data['tooltip'] += f"⬆️ {day['maxtempC']}° ⬇️ {day['mintempC']}° "
-    data['tooltip'] += f"🌅 {day['astronomy'][0]['sunrise']} 🌇 {day['astronomy'][0]['sunset']}\n"
-    for hour in day['hourly']:
-        if i == 0:
-            if int(format_time(hour['time'])) < datetime.now().hour-2:
-                continue
-        data['tooltip'] += f"{format_time(hour['time'])} {WEATHER_CODES[hour['weatherCode']]} {format_temp(hour['FeelsLikeC'])} {hour['weatherDesc'][0]['value']}, {format_chances(hour)}\n"
+        for w in weather_data:
+            text_parts.append(f"{w['icon']} {w['temp']}°")
+            tooltip_lines.append(
+                f"{w['name']}: {w['desc']}\n"
+                f"Temperature: {w['temp']}°C (feels like {w['feels']}°C)\n"
+                f"Humidity: {w['humidity']}%"
+            )
 
+        output = {
+            "text": " | ".join(text_parts),
+            "tooltip": "\n\n".join(tooltip_lines)
+        }
 
-print(json.dumps(data))
+    print(json.dumps(output))
+
+if __name__ == "__main__":
+    main()
