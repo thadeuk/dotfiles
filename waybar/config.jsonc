@@ -23,7 +23,7 @@
         "cpu",
         "backlight",
         "pulseaudio",
-        "battery",
+        "custom/battery",
         "tray"
     ],
     "hyprland/workspaces": {
@@ -47,6 +47,7 @@
     "custom/moon": {
         "format": "{}",
         "interval": 3600,
+        "return-type": "json",
         "exec": "~/.config/waybar/scripts/moon.sh"
     },
     "temperature": {
@@ -103,29 +104,11 @@
         "on-scroll-up": "brightnessctl -q set 5%+",
         "on-scroll-down": "brightnessctl -q set 5%-"
     },
-    "battery": {
-        "states": {
-            "good": 80,
-            "warning": 40,
-            "critical": 20
-        },
-        "format": "{icon} {capacity}%",
-        "format-charging": " {capacity}%",
-        "format-plugged": " {capacity}%",
-        "format-alt": "{time} {icon}",
-        "format-icons": [
-            "󰂎",
-            "󰁺",
-            "󰁻",
-            "󰁼",
-            "󰁽",
-            "󰁾",
-            "󰁿",
-            "󰂀",
-            "󰂁",
-            "󰂂",
-            "󰁹"
-        ]
+    "custom/battery": {
+      "exec": "~/.config/waybar/scripts/tlp_battery.sh",
+      "interval": 10,
+      "return-type": "json",
+      "on-click": "alacritty -e bash -lc 'tlp-stat -s; echo; echo Press any key...; read -n1'"
     },
     "pulseaudio": {
         "format": "{icon} {volume}%",
@@ -177,5 +160,11 @@
     "cpu": {
       "format": "{usage}% ",
       "tooltip": true
+    },
+    "custom/tlp": {
+      "exec": "~/.config/waybar/scripts/tlp_status.sh",
+      "interval": 5,
+      "return-type": "json",
+      "on-click": "alacritty -e bash -lc 'tlp-stat -s; echo; echo Press any key...; read -n1'"
     }
 }

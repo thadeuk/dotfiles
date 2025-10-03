@@ -49,6 +49,7 @@ tooltip {
     border-radius: 5px;
 }
 
+#custom-tlp,
 #custom-power_profile,
 #custom-weather,
 #custom-moon,
@@ -56,7 +57,7 @@ tooltip {
 #cpu,
 #window,
 #clock,
-#battery,
+#custom-battery,
 #pulseaudio,
 #network,
 #bluetooth,
@@ -156,20 +157,33 @@ tooltip {
     border-left: 0px;
 }
 
-#battery {
+#custom-battery {
     color: #a6e3a1;
     border-radius: 0 10px 10px 0;
     margin-right: 10px;
     border-left: 0px;
 }
-#battery.warning {
-    color: #FFA500;
+#custom-battery.charging { color: #a6e3a1; }
+#custom-battery.bat.full { color: #89b4fa; }
+#custom-battery.bpower { opacity: .9; }
+#custom-battery.power  { opacity: .8; }
+
+/* make the tlp chip a bit smaller & subtle */
+#custom-tlp {
+  color: #a6e3a1;
+  border-radius: 0 10px 10px 0;
+  margin-right: 10px;
+  border-left: 0px;
+  border: 1px solid #181825;
 }
-#battery.critical {
-    color: #F00;
-} 
-#custom-moon {
-    border-radius: 0px 10px 10px 0px;
-    border-right: 0px;
-    margin-left: 0px;
-}
+
+/* keep your AC/BAT background tinting */
+#custom-tlp.ac  { background: rgba(70, 160, 255, 0.15); }
+#custom-tlp.bat { background: rgba(255, 200,  0,  0.15); }
+
+/* performance vibe via EPP (reuse your borders) */
+#custom-tlp.perf   { border: 1px solid rgba(70,160,255,0.6); }
+#custom-tlp.bperf  { border: 1px solid rgba(140,140,255,0.5); }
+#custom-tlp.bpower { border: 1px solid rgba(255,170, 80,0.6); }
+#custom-tlp.power  { border: 1px solid rgba(255,120,120,0.7); }
+
