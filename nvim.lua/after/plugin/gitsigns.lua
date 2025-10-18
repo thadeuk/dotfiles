@@ -8,3 +8,7 @@ require('gitsigns').setup {
     untracked    = { text = '┆' },
   }
 }
+
+vim.keymap.set('n', ']g', require('gitsigns').next_hunk)
+vim.keymap.set('n', '[g', require('gitsigns').prev_hunk)
+vim.keymap.set('n', '<leader>gB', require('gitsigns').blame_line, { desc = "Blame line" })

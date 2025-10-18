@@ -34,8 +34,7 @@ def main():
     data = get_weather()
     
     if not data:
-        output = {"text": "❌", "tooltip": f"{CITY_NAME}: Weather data unavailable"}
-        print(json.dumps(output))
+        print(json.dumps({"text": ""}))
         return
 
     current = data.get("current_condition", [{}])[0]

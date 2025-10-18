@@ -15,7 +15,7 @@ for ps in /sys/class/power_supply/*; do
 done
 
 # ---------- Battery aggregate (supports multi-battery) ----------
-sum_now=0 sum_full=0 have_energy=0 cap_any=""
+sum_now=0 sum_full=0 sum_power=0 avg_voltage=0 have_energy=0 use_charge=0 cap_any=""
 status="Unknown"
 for ps in /sys/class/power_supply/BAT*; do
   [ -d "$ps" ] || continue
@@ -26,14 +26,21 @@ for ps in /sys/class/power_supply/BAT*; do
     full=$(cat "$ps/energy_full")
     sum_now=$((sum_now + now))
     sum_full=$((sum_full + full))
+    [ -r "$ps/power_now" ] && sum_power=$((sum_power + $(cat "$ps/power_now")))
   elif [ -r "$ps/charge_now" ] && [ -r "$ps/charge_full" ]; then
     have_energy=1
+    use_charge=1
     now=$(cat "$ps/charge_now")
     full=$(cat "$ps/charge_full")
     sum_now=$((sum_now + now))
     sum_full=$((sum_full + full))
+    if [ -r "$ps/current_now" ] && [ -r "$ps/voltage_now" ]; then
+      current=$(cat "$ps/current_now")
+      voltage=$(cat "$ps/voltage_now")
+      avg_voltage=$voltage
+      sum_power=$((sum_power + current))
+    fi
   elif [ -r "$ps/capacity" ]; then
-    # fallback to first capacity file found
     [ -z "${cap_any:-}" ] && cap_any="$(cat "$ps/capacity")"
   fi
 done
@@ -44,6 +51,25 @@ elif [ -n "${cap_any:-}" ]; then
   capacity=$cap_any
 else
   capacity=0
+fi
+
+time_remaining=""
+if [ "$sum_power" -gt 0 ]; then
+  if [ "$status" = "Discharging" ]; then
+    hours_raw=$(awk "BEGIN {printf \"%.2f\", $sum_now / $sum_power}")
+  elif [ "$status" = "Charging" ]; then
+    remaining=$((sum_full - sum_now))
+    hours_raw=$(awk "BEGIN {printf \"%.2f\", $remaining / $sum_power}")
+  fi
+  if [ -n "${hours_raw:-}" ] && [ "$(awk "BEGIN {print ($hours_raw > 0)}")" = "1" ]; then
+    hours=$(awk "BEGIN {print int($hours_raw)}")
+    mins=$(awk "BEGIN {print int(($hours_raw - $hours) * 60)}")
+    if [ "$status" = "Discharging" ]; then
+      time_remaining="${hours}h ${mins}m remaining"
+    elif [ "$status" = "Charging" ]; then
+      time_remaining="${hours}h ${mins}m until full"
+    fi
+  fi
 fi
 
 # ---------- CPU / platform bits for tooltip ----------
@@ -80,7 +106,9 @@ ppct="";         { [ -n "$minp" ] || [ -n "$maxp" ]; } && ppct="${minp:-?}%..${m
 readable_power=$([ "$power_state" = "AC" ] && echo "AC" || echo "Battery")
 
 tooltip=""
-tooltip+=$'Power: '"${readable_power}"$' · Status: '"${status}"$'\n'
+tooltip+=$'Power: '"${readable_power}"$' · Status: '"${status}"
+[ -n "$time_remaining" ] && tooltip+=$' · '"${time_remaining}"
+tooltip+=$'\n'
 tooltip+=$'CPU: gov='"${gov}"$' · EPP='"${epp:-unknown}"$' · driver='"${drv}"$'\n'
 tooltip+=$'Platform profile: '"${plat}"$'\n'
 [ -n "$ppct" ]   && tooltip+=$'Perf window: '"${ppct}"$'\n'

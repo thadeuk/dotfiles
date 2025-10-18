@@ -104,10 +104,7 @@ def main():
             })
 
     if not weather_data:
-        output = {
-            "text": "❌",
-            "tooltip": "Weather data unavailable"
-        }
+        output = {"text": ""}
     else:
         text_parts = []
         tooltip_lines = []
