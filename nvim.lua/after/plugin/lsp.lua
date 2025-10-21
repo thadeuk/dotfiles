@@ -66,12 +66,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('n', 'gd', vim.lsp.buf.definition)
     map('n', 'K', vim.lsp.buf.hover)
     map('n', '<leader>vws', vim.lsp.buf.workspace_symbol)
-    map('n', '<leader>vd', vim.diagnostic.open_float)
     map('n', '[d', vim.diagnostic.goto_next)
     map('n', ']d', vim.diagnostic.goto_prev)
-    map('n', '<leader>vca', vim.lsp.buf.code_action)
-    map('n', '<leader>vrr', vim.lsp.buf.references)
-    map('n', '<leader>vrn', vim.lsp.buf.rename)
+    map('n', '<F2>', vim.lsp.buf.rename)
     map('i', '<C-h>', vim.lsp.buf.signature_help)
   end,
 })

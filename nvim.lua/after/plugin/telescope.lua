@@ -27,8 +27,21 @@ vim.keymap.set('n', '<C-f>', function()
   })
 end)
 
+vim.keymap.set('n', '<leader>*', function()
+  builtin.grep_string({
+    hidden = true,
+    no_ignore = true,
+    file_ignore_patterns = {
+      "node_modules",
+      "dist/",
+      "%.git/",
+      "%.cache/",
+    },
+  })
+end)
+
 -- Telescope git keybindings
 vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = "Git status (modified files)" })
-vim.keymap.set('n', '<leader>gH', builtin.git_commits, { desc = "Git commits (full history)" })
+vim.keymap.set('n', '<leader>gl', builtin.git_commits, { desc = "Git commits (full history)" })
 vim.keymap.set('n', '<leader>gh', builtin.git_bcommits, { desc = "Git log (current file history)" })
 vim.keymap.set('n', '<leader>gb', builtin.git_branches, { desc = "Git branches" })
