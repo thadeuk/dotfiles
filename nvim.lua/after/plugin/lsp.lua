@@ -39,6 +39,7 @@ local servers = {
   yamlls = {},
   html = {},
   cssls = {},
+  gopls = {},
   lua_ls = {
     settings = {
       Lua = {
@@ -56,6 +57,8 @@ for name, config in pairs(servers) do
   vim.lsp.enable(name)
 end
 
+local format_group = vim.api.nvim_create_augroup("lsp_format_autocmd", { clear = false })
+
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(event)
     local opts = { buffer = event.buf, silent = true, noremap = true }
@@ -70,6 +73,25 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('n', ']d', vim.diagnostic.goto_prev)
     map('n', '<F2>', vim.lsp.buf.rename)
     map('i', '<C-h>', vim.lsp.buf.signature_help)
+
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+    if client and client.supports_method('textDocument/formatting') then
+      map('n', '<leader>f', function()
+        vim.lsp.buf.format({ bufnr = event.buf })
+      end)
+      map('x', '<leader>f', function()
+        vim.lsp.buf.format({ bufnr = event.buf })
+      end)
+
+      vim.api.nvim_clear_autocmds({ buffer = event.buf, group = format_group })
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        buffer = event.buf,
+        group = format_group,
+        callback = function()
+          vim.lsp.buf.format({ bufnr = event.buf, async = false })
+        end,
+      })
+    end
   end,
 })
 
