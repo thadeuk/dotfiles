@@ -3,8 +3,8 @@ import json
 import urllib.request
 import urllib.error
 
-CITY_CODE = "ChiangMai,Thailand"
-CITY_NAME = "Chiang Mai"
+CITY_CODE = "Uberlandia,Brazil"
+CITY_NAME = "Uberlândia, Brazil"
 
 def get_weather():
     try:
@@ -74,7 +74,7 @@ def main():
 
     forecast_text = "\n".join(forecast_lines) if forecast_lines else ""
 
-    tooltip = f"""🌍 {CITY_NAME}, Thailand
+    tooltip = f"""🌍 {CITY_NAME}
 
 {desc}
 

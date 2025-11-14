@@ -37,7 +37,17 @@ local servers = {
   dockerls = {},
   bashls = {},
   yamlls = {},
-  html = {},
+  html = {
+    settings = {
+      css = {
+        -- Keep this: prevents 'validProperties' null crash inside CSS service
+        lint = { validProperties = {} },
+        -- Optional safety switch if it still misbehaves:
+        -- validate = false,
+      },
+    },
+    single_file_support = true,
+  },
   cssls = {},
   gopls = {},
   lua_ls = {
