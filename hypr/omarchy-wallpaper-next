@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+current_link="$HOME/.config/omarchy/current/background"
+themes_dir="$HOME/.config/omarchy/themes"
+
+if [[ ! -d "$themes_dir" ]]; then
+  notify-send "Omarchy wallpaper" "No Omarchy themes directory found" 2>/dev/null || true
+  exit 1
+fi
+
+if [[ "${1:-}" == "--theme-random" ]]; then
+  theme_name="$(cat "$HOME/.config/omarchy/current/theme.name" 2>/dev/null || true)"
+  theme_backgrounds="$themes_dir/$theme_name/backgrounds"
+
+  if [[ -d "$theme_backgrounds" ]]; then
+    search_root="$theme_backgrounds"
+    find_args=(-maxdepth 1)
+  else
+    search_root="$themes_dir"
+    find_args=(-path '*/backgrounds/*')
+  fi
+else
+  search_root="$themes_dir"
+  find_args=(-path '*/backgrounds/*')
+fi
+
+mapfile -d '' backgrounds < <(
+  find -L "$search_root" "${find_args[@]}" -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \) \
+    -print0 | sort -z
+)
+
+if (( ${#backgrounds[@]} == 0 )); then
+  notify-send "Omarchy wallpaper" "No Omarchy background images found" 2>/dev/null || true
+  exit 1
+fi
+
+current=""
+if [[ -L "$current_link" ]]; then
+  current="$(readlink "$current_link")"
+fi
+
+if [[ "${1:-}" == "--random" || "${1:-}" == "--theme-random" ]]; then
+  next="${backgrounds[$((RANDOM % ${#backgrounds[@]}))]}"
+else
+  index=-1
+  for i in "${!backgrounds[@]}"; do
+    if [[ "${backgrounds[$i]}" == "$current" ]]; then
+      index="$i"
+      break
+    fi
+  done
+
+  next="${backgrounds[$(((index + 1) % ${#backgrounds[@]}))]}"
+fi
+
+mkdir -p "$(dirname "$current_link")"
+ln -sfn "$next" "$current_link"
+
+mapfile -t monitors < <(hyprctl monitors | awk '/^Monitor / { print $2 }')
+
+{
+  printf 'splash = false\n'
+  if (( ${#monitors[@]} == 0 )); then
+    printf 'wallpaper {\n'
+    printf '    monitor =\n'
+    printf '    path = %s\n' "$next"
+    printf '    fit_mode = cover\n'
+    printf '}\n'
+  else
+    for monitor in "${monitors[@]}"; do
+      printf 'wallpaper {\n'
+      printf '    monitor = %s\n' "$monitor"
+      printf '    path = %s\n' "$next"
+      printf '    fit_mode = cover\n'
+      printf '}\n'
+    done
+  fi
+} >"$HOME/.config/hypr/hyprpaper.conf"
+
+if ! pgrep -x hyprpaper >/dev/null; then
+  setsid -f hyprpaper --config "$HOME/.config/hypr/hyprpaper.conf" >/tmp/hyprpaper.log 2>&1
+  sleep 0.5
+fi
+
+if (( ${#monitors[@]} == 0 )); then
+  hyprctl hyprpaper wallpaper ", $next, cover" >/dev/null
+else
+  for monitor in "${monitors[@]}"; do
+    hyprctl hyprpaper wallpaper "$monitor, $next, cover" >/dev/null
+  done
+fi

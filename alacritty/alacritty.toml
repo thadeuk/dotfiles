@@ -109,14 +109,10 @@ save_to_clipboard = true
 # UNIQUE_ID=do_not_delete_this_line
 # #############################################################################
 
-# import = ["~/.config/alacritty/themes/dracula.toml"]
-# import = ["~/.config/alacritty/themes/catppuccin-frappe.toml"]
-# import = ["~/.config/alacritty/themes/catppuccin/catppuccin-frappe.toml"]
-import = ["~/.config/alacritty/themes/catppuccin/catppuccin-mocha.toml"]
-# import = ["~/github/dotfiles-latest/alacritty/themes/catppuccin/catppuccin-mocha.toml"]
-# import = ["~/github/dotfiles-latest/alacritty/themes/catppuccin/catppuccin-macchiato.toml"]
-# import = ["~/github/dotfiles-latest/alacritty/themes/catppuccin/catppuccin-frappe.toml"]
-# import = ["~/github/dotfiles-latest/alacritty/themes/catppuccin/catppuccin-latte.toml"]
+#import = ["~/.config/alacritty/themes/dracula.toml"]
+import = ["~/.config/omarchy/generated/alacritty.toml"]
+#import = ["~/.config/alacritty/themes/catppuccin/catppuccin-frappe.toml"]
+#import = ["~/.config/alacritty/themes/catppuccin/catppuccin-mocha.toml"]
 #import = ["~/.config/alacritty/themes/eldritch.toml"]
 
 [[keyboard.bindings]]

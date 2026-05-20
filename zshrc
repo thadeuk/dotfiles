@@ -2,13 +2,13 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/fireflies/.oh-my-zsh"
+export ZSH="/home/thadeu/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="agnoster"
+#ZSH_THEME="agnoster"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -70,7 +70,7 @@ ZSH_THEME="agnoster"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git z screen dotenv)
+plugins=(git z screen dotenv sudo docker kubectl)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -108,14 +108,21 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PATH="$PATH:/home/fireflies/.protostar/dist/protostar"
+export PATH="$PATH:/home/thadeu/.protostar/dist/protostar"
 
 export CHROME_EXECUTABLE=/opt/google/chrome/chrome
 
-export PATH=$PATH:/home/fireflies/.cargo/bin/
-export PATH=$PATH:/home/fireflies/Downloads/flutter/bin
+export PATH=$PATH:/home/thadeu/.cargo/bin/
+export PATH=$PATH:/home/thadeu/Downloads/flutter/bin
 
 export ANDROID_HOME=/opt/android-sdk
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
+
+
+alias ls='eza'
+alias ll='eza -lah'
+alias cat='bat'
+
+eval "$(starship init zsh)"

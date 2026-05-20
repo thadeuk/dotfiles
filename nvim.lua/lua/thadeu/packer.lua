@@ -15,7 +15,6 @@ return require('packer').startup(function(use)
   use({
     'nvim-treesitter/nvim-treesitter',
     branch = 'main',
-    run = ':TSUpdate',
   })
   use("nvim-treesitter/nvim-treesitter-context") -- show code context at top
 
@@ -91,8 +90,6 @@ return require('packer').startup(function(use)
   }
 
   use("vim-test/vim-test")
-
-  use 'wakatime/vim-wakatime'
 
   use 'f-person/git-blame.nvim'
 

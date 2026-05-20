@@ -207,3 +207,72 @@ tooltip {
     border-left: 0px;
 }
 
+
+/* Omarchy theme overrides */
+window#waybar {
+    color: #C1C497;
+}
+
+tooltip,
+#custom-tlp,
+#custom-power_profile,
+#custom-weather-current,
+#custom-weather-rouen,
+#custom-moon,
+#custom-wallpaper,
+#cpu,
+#window,
+#clock,
+#custom-battery,
+#pulseaudio,
+#network,
+#bluetooth,
+#temperature,
+#memory,
+#workspaces,
+#tray,
+#backlight {
+    background: #111c18;
+    border-color: #23372B;
+}
+
+#workspaces button {
+    color: #53685B;
+}
+
+#workspaces button.focused,
+#workspaces button.active,
+#entry:selected {
+    background-color: #23372B;
+    color: #509475;
+}
+
+#memory,
+#pulseaudio.microphone {
+    color: #D2689C;
+}
+
+#temperature,
+#custom-weather-rouen,
+#bluetooth,
+#pulseaudio {
+    color: #2DD5B7;
+}
+
+#clock {
+    color: #459451;
+}
+
+#network {
+    color: #E5C736;
+}
+
+#custom-power_profile,
+#custom-battery,
+#custom-tlp {
+    color: #549e6a;
+}
+
+#cpu {
+    color: #75bbb3;
+}
