@@ -12,7 +12,11 @@ return require('packer').startup(function(use)
     requires = { { 'nvim-lua/plenary.nvim' } }
   }
 
-  use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' })
+  use({
+    'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    run = ':TSUpdate',
+  })
   use("nvim-treesitter/nvim-treesitter-context") -- show code context at top
 
   use {
@@ -37,12 +41,12 @@ return require('packer').startup(function(use)
   use('nvimtools/none-ls.nvim')
   use('MunifTanjim/prettier.nvim')
 
-  use('lewis6991/gitsigns.nvim')        -- git decorations in the sign column
-  use("mbbill/undotree")                -- undo history visualizer - <leader>u to toggle
-  use("folke/trouble.nvim")             -- <leader>xx to toggle
+  use('lewis6991/gitsigns.nvim')         -- git decorations in the sign column
+  use("mbbill/undotree")                 -- undo history visualizer - <leader>u to toggle
+  use("folke/trouble.nvim")              -- <leader>xx to toggle
 
-  use("folke/zen-mode.nvim")            -- zen mode for distraction free coding
-  use("github/copilot.vim")             -- GitHub Copilot
+  use("folke/zen-mode.nvim")             -- zen mode for distraction free coding
+  use("github/copilot.vim")              -- GitHub Copilot
   use("eandrju/cellular-automaton.nvim") -- cellular automaton animations. Use :CellularAutomaton make_it_rain|game_of_life|scramble
 
   -- Colorscheme
@@ -74,7 +78,7 @@ return require('packer').startup(function(use)
 
   -- Tabline
   use { 'romgrk/barbar.nvim', requires = {
-    'lewis6991/gitsigns.nvim',   -- OPTIONAL: for git status
+    'lewis6991/gitsigns.nvim',     -- OPTIONAL: for git status
     'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
   } }
 
