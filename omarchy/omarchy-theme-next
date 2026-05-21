@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+themes_dir="$HOME/.config/omarchy/themes"
+current_file="$HOME/.config/omarchy/current/theme.name"
+apply="$HOME/.config/omarchy/omarchy-theme-apply"
+
+mapfile -t themes < <(find "$themes_dir" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort)
+
+if (( ${#themes[@]} == 0 )); then
+  echo "No Omarchy themes found in $themes_dir" >&2
+  exit 1
+fi
+
+current="$(cat "$current_file" 2>/dev/null || true)"
+index=-1
+
+for i in "${!themes[@]}"; do
+  if [[ "${themes[$i]}" == "$current" ]]; then
+    index="$i"
+    break
+  fi
+done
+
+next="${themes[$(((index + 1) % ${#themes[@]}))]}"
+"$apply" "$next"

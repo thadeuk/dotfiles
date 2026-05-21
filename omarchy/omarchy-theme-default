@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+snapshot_dir="$HOME/.config/omarchy/default-theme"
+
+cp "$snapshot_dir/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
+cp "$snapshot_dir/waybar-style.css" "$HOME/.config/waybar/style.css"
+cp "$snapshot_dir/mako-config" "$HOME/.config/mako/config"
+cp "$snapshot_dir/wofi-style.css" "$HOME/.config/wofi/style.css"
+cp "$snapshot_dir/gtk-3-settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
+cp "$snapshot_dir/gtk-4-settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
+cp "$snapshot_dir/xsettingsd.conf" "$HOME/.config/xsettingsd/xsettingsd.conf"
+if [[ -s "$snapshot_dir/hyprlock.conf" ]]; then
+  cp "$snapshot_dir/hyprlock.conf" "$HOME/.config/hypr/hyprlock.conf"
+else
+  rm -f "$HOME/.config/hypr/hyprlock.conf"
+fi
+mkdir -p "$HOME/.config/swayosd"
+cp "$snapshot_dir/swayosd-style.css" "$HOME/.config/swayosd/style.css"
+sed -i '/^# Omarchy theme overrides$/d;/^source = ~\/.config\/omarchy\/generated\/hyprland-theme\.conf$/d' "$HOME/.config/hypr/hyprland.conf"
+
+rm -f "$HOME/.config/gtk-3.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css" "$HOME/.config/btop/themes/omarchy.theme"
+ln -sfn /usr/share/themes/adw-gtk3-dark/gtk-4.0/gtk.css "$HOME/.config/gtk-4.0/gtk.css"
+if [[ -f "$HOME/.config/btop/btop.conf" ]]; then
+  sed -i '/^color_theme[[:space:]]*=[[:space:]]*"omarchy"$/d' "$HOME/.config/btop/btop.conf"
+fi
+
+default_icon="$(awk -F= '/^gtk-icon-theme-name=/ { print $2; exit }' "$snapshot_dir/gtk-3-settings.ini")"
+if [[ -n "$default_icon" ]]; then
+  gsettings set org.gnome.desktop.interface icon-theme "$default_icon" >/dev/null 2>&1 || true
+fi
+
+echo "default" >"$HOME/.config/omarchy/current/theme.name"
+
+if pgrep -x waybar >/dev/null; then
+  pkill waybar
+  waybar >/tmp/waybar.log 2>&1 &
+fi
+
+if pgrep -x mako >/dev/null; then
+  makoctl reload >/dev/null 2>&1 || pkill mako
+fi
+
+if pgrep -x swayosd-server >/dev/null; then
+  pkill swayosd-server
+  swayosd-server >/tmp/swayosd.log 2>&1 &
+fi
+
+hyprctl reload >/dev/null 2>&1 || true
+touch "$HOME/.config/alacritty/alacritty.toml"
+
+mkdir -p "$HOME/.config/omarchy/generated"
+printf '{"BrowserColorScheme": "device"}\n' >"$HOME/.config/omarchy/generated/browser-color.json"
+
+echo "Restored default theme"
