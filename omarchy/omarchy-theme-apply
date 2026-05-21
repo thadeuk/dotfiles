@@ -1,0 +1,512 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+theme="${1:-}"
+if [[ -z "$theme" ]]; then
+  echo "Usage: omarchy-theme-apply <theme-name>" >&2
+  exit 1
+fi
+
+theme="${theme,,}"
+theme="${theme// /-}"
+
+themes_dir="$HOME/.config/omarchy/themes"
+theme_dir="$themes_dir/$theme"
+generated_dir="$HOME/.config/omarchy/generated"
+current_dir="$HOME/.config/omarchy/current"
+
+if [[ ! -d "$theme_dir" ]]; then
+  echo "Theme not found: $theme" >&2
+  exit 1
+fi
+
+mkdir -p "$generated_dir" "$current_dir"
+rm -f "$generated_dir/alacritty.toml" "$generated_dir/waybar-overrides.css" "$generated_dir/mako-config" "$generated_dir/hyprland-theme.conf" "$generated_dir/wofi-style.css" "$generated_dir/gtk.css" "$generated_dir/btop.theme" "$generated_dir/swayosd.css" "$generated_dir/hyprlock-theme.conf"
+echo "$theme" >"$current_dir/theme.name"
+ln -sfn "$theme_dir" "$current_dir/theme"
+
+colors_file="$theme_dir/colors.toml"
+if [[ -f "$colors_file" ]]; then
+  get_color() {
+    awk -F= -v key="$1" '$1 ~ "^[[:space:]]*" key "[[:space:]]*$" {
+      gsub(/[[:space:]"'\''#]/, "", $2)
+      print "#" $2
+      exit
+    }' "$colors_file"
+  }
+
+  background="$(get_color background)"
+  foreground="$(get_color foreground)"
+  accent="$(get_color accent)"
+  cursor="$(get_color cursor)"
+  color0="$(get_color color0)"
+  color1="$(get_color color1)"
+  color2="$(get_color color2)"
+  color3="$(get_color color3)"
+  color4="$(get_color color4)"
+  color5="$(get_color color5)"
+  color6="$(get_color color6)"
+  color7="$(get_color color7)"
+  color8="$(get_color color8)"
+  color9="$(get_color color9)"
+  color10="$(get_color color10)"
+  color11="$(get_color color11)"
+  color12="$(get_color color12)"
+  color13="$(get_color color13)"
+  color14="$(get_color color14)"
+  color15="$(get_color color15)"
+
+  cat >"$generated_dir/alacritty.toml" <<EOF
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.primary]
+background = "$background"
+foreground = "$foreground"
+
+[colors.cursor]
+cursor = "$cursor"
+text = "$background"
+
+[colors.normal]
+black = "$color0"
+red = "$color1"
+green = "$color2"
+yellow = "$color3"
+blue = "$color4"
+magenta = "$color5"
+cyan = "$color6"
+white = "$color7"
+
+[colors.bright]
+black = "$color8"
+red = "$color9"
+green = "$color10"
+yellow = "$color11"
+blue = "$color12"
+magenta = "$color13"
+cyan = "$color14"
+white = "$color15"
+EOF
+
+  cat >"$generated_dir/waybar-overrides.css" <<EOF
+window#waybar {
+    color: $foreground;
+}
+
+tooltip,
+#custom-tlp,
+#custom-power_profile,
+#custom-weather-current,
+#custom-weather-rouen,
+#custom-moon,
+#custom-wallpaper,
+#cpu,
+#window,
+#clock,
+#custom-battery,
+#pulseaudio,
+#network,
+#bluetooth,
+#temperature,
+#memory,
+#workspaces,
+#tray,
+#backlight {
+    background: $background;
+    border-color: $color0;
+}
+
+#workspaces button {
+    color: $color8;
+}
+
+#workspaces button.focused,
+#workspaces button.active,
+#entry:selected {
+    background-color: $color0;
+    color: $accent;
+}
+
+#memory,
+#pulseaudio.microphone {
+    color: $color5;
+}
+
+#temperature,
+#custom-weather-rouen,
+#bluetooth,
+#pulseaudio {
+    color: $color6;
+}
+
+#clock {
+    color: $color3;
+}
+
+#network {
+    color: $color11;
+}
+
+#custom-power_profile,
+#custom-battery,
+#custom-tlp {
+    color: $color2;
+}
+
+#cpu {
+    color: $color13;
+}
+EOF
+
+  cat >"$generated_dir/mako-config" <<EOF
+font=JetBrains Mono Nerd Font 11
+
+background-color=$background
+text-color=$foreground
+border-color=$accent
+progress-color=$accent
+
+width=360
+height=120
+margin=20
+padding=12
+border-size=2
+border-radius=12
+
+anchor=top-right
+layer=overlay
+
+default-timeout=6000
+ignore-timeout=1
+max-visible=4
+icons=1
+max-icon-size=48
+
+[urgency=low]
+border-color=$color2
+text-color=$color2
+
+[urgency=normal]
+border-color=$accent
+text-color=$foreground
+
+[urgency=high]
+border-color=$color1
+text-color=$color1
+default-timeout=0
+EOF
+
+  cat >"$generated_dir/hyprland-theme.conf" <<EOF
+general {
+    col.active_border = rgba(${accent#\#}ee)
+    col.inactive_border = rgba(${color0#\#}aa)
+}
+
+decoration {
+    shadow {
+        color = rgba(${background#\#}ee)
+    }
+}
+EOF
+
+  cat >"$generated_dir/wofi-style.css" <<EOF
+* {
+  font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font", sans-serif;
+  font-size: 13px;
+}
+
+window {
+  margin: 0;
+  border: 2px solid $accent;
+  border-radius: 8px;
+  background-color: alpha($background, 0.96);
+}
+
+#input {
+  margin: 12px;
+  padding: 10px 12px;
+  border: 1px solid $color0;
+  border-radius: 6px;
+  color: $foreground;
+  background-color: $background;
+}
+
+#inner-box {
+  margin: 0 8px 8px 8px;
+}
+
+#outer-box,
+#scroll {
+  margin: 0;
+}
+
+#entry {
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+
+#entry:selected {
+  background-color: $color0;
+}
+
+#text {
+  margin-left: 10px;
+  color: $foreground;
+}
+
+#text:selected {
+  color: $color11;
+}
+
+#img {
+  margin-right: 8px;
+}
+EOF
+
+  cat >"$generated_dir/gtk.css" <<EOF
+@define-color accent_bg_color $accent;
+@define-color accent_fg_color $background;
+@define-color accent_color $accent;
+@define-color window_bg_color $background;
+@define-color window_fg_color $foreground;
+@define-color view_bg_color $background;
+@define-color view_fg_color $foreground;
+@define-color headerbar_bg_color $background;
+@define-color headerbar_fg_color $foreground;
+@define-color card_bg_color $background;
+@define-color card_fg_color $foreground;
+@define-color popover_bg_color $background;
+@define-color popover_fg_color $foreground;
+@define-color theme_bg_color $background;
+@define-color theme_fg_color $foreground;
+@define-color theme_base_color $background;
+@define-color theme_text_color $foreground;
+@define-color theme_selected_bg_color $accent;
+@define-color theme_selected_fg_color $background;
+@define-color borders alpha($foreground, 0.20);
+EOF
+
+  cat >"$generated_dir/swayosd.css" <<EOF
+@define-color background-color $background;
+@define-color border-color $foreground;
+@define-color label $foreground;
+@define-color image $foreground;
+@define-color progress $accent;
+
+window:not(:backdrop),
+window:backdrop {
+    border: none;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 12px;
+}
+
+window:not(:backdrop) #container,
+window:backdrop #container {
+    border: 2px solid @border-color;
+    border-radius: 4px;
+    background-color: @background-color;
+    padding: 12px;
+    background-clip: padding-box;
+    box-shadow: 2px 2px 9px 0px rgba(22, 22, 22, 1);
+}
+EOF
+
+  cat >"$generated_dir/hyprlock-theme.conf" <<EOF
+\$color = rgba(${background#\#}ff)
+\$inner_color = rgba(${background#\#}cc)
+\$outer_color = rgba(${foreground#\#}ff)
+\$font_color = rgba(${foreground#\#}ff)
+\$check_color = rgba(${accent#\#}ff)
+EOF
+fi
+
+if [[ -f "$theme_dir/alacritty.toml" ]]; then
+  cp "$theme_dir/alacritty.toml" "$generated_dir/alacritty.toml"
+fi
+
+if [[ -f "$theme_dir/waybar.css" ]]; then
+  cp "$theme_dir/waybar.css" "$generated_dir/waybar-overrides.css"
+fi
+
+if [[ -f "$theme_dir/mako.ini" ]]; then
+  cp "$theme_dir/mako.ini" "$generated_dir/mako-config"
+fi
+
+if [[ -f "$theme_dir/wofi.css" ]]; then
+  cp "$theme_dir/wofi.css" "$generated_dir/wofi-style.css"
+fi
+
+if [[ -f "$theme_dir/gtk.css" ]]; then
+  cp "$theme_dir/gtk.css" "$generated_dir/gtk.css"
+fi
+
+if [[ -f "$theme_dir/btop.theme" ]]; then
+  cp "$theme_dir/btop.theme" "$generated_dir/btop.theme"
+fi
+
+if [[ -f "$theme_dir/swayosd.css" ]]; then
+  cp "$theme_dir/swayosd.css" "$generated_dir/swayosd.css"
+fi
+
+if [[ -f "$theme_dir/hyprlock.conf" ]]; then
+  cp "$theme_dir/hyprlock.conf" "$generated_dir/hyprlock-theme.conf"
+fi
+
+if [[ ! -f "$generated_dir/alacritty.toml" ]]; then
+  cp "$HOME/.config/omarchy/default-theme/alacritty.toml" "$generated_dir/alacritty.toml"
+fi
+
+if [[ ! -f "$generated_dir/waybar-overrides.css" ]]; then
+  : >"$generated_dir/waybar-overrides.css"
+fi
+
+if [[ ! -f "$generated_dir/mako-config" ]]; then
+  cp "$HOME/.config/omarchy/default-theme/mako-config" "$generated_dir/mako-config"
+fi
+
+if [[ ! -f "$generated_dir/wofi-style.css" ]]; then
+  cp "$HOME/.config/omarchy/default-theme/wofi-style.css" "$generated_dir/wofi-style.css"
+fi
+
+if [[ ! -f "$generated_dir/gtk.css" ]]; then
+  : >"$generated_dir/gtk.css"
+fi
+
+if [[ ! -f "$generated_dir/swayosd.css" ]]; then
+  cp "$HOME/.config/omarchy/default-theme/swayosd-style.css" "$generated_dir/swayosd.css"
+fi
+
+if [[ ! -f "$generated_dir/hyprland-theme.conf" ]]; then
+  : >"$generated_dir/hyprland-theme.conf"
+fi
+
+if [[ ! -f "$generated_dir/hyprlock-theme.conf" ]]; then
+  cat >"$generated_dir/hyprlock-theme.conf" <<'EOF'
+$color = rgba(1e1e2eff)
+$inner_color = rgba(1e1e2ecc)
+$outer_color = rgba(cdd6f4ff)
+$font_color = rgba(cdd6f4ff)
+$check_color = rgba(89b4faff)
+EOF
+fi
+
+cp "$HOME/.config/omarchy/default-theme/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
+sed -i 's|^import = .*|import = ["~/.config/omarchy/generated/alacritty.toml"]|' "$HOME/.config/alacritty/alacritty.toml"
+
+cp "$HOME/.config/omarchy/default-theme/waybar-style.css" "$HOME/.config/waybar/style.css"
+{
+  printf '\n/* Omarchy theme overrides */\n'
+  cat "$generated_dir/waybar-overrides.css"
+} >>"$HOME/.config/waybar/style.css"
+
+cp "$generated_dir/mako-config" "$HOME/.config/mako/config"
+cp "$generated_dir/wofi-style.css" "$HOME/.config/wofi/style.css"
+
+mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.config/btop/themes"
+rm -f "$HOME/.config/gtk-3.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
+cp "$generated_dir/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
+cp "$generated_dir/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
+mkdir -p "$HOME/.config/swayosd"
+cp "$generated_dir/swayosd.css" "$HOME/.config/swayosd/style.css"
+
+if [[ -f "$generated_dir/btop.theme" ]]; then
+  cp "$generated_dir/btop.theme" "$HOME/.config/btop/themes/omarchy.theme"
+  if [[ -f "$HOME/.config/btop/btop.conf" ]]; then
+    if grep -q '^color_theme[[:space:]]*=' "$HOME/.config/btop/btop.conf"; then
+      sed -i 's|^color_theme[[:space:]]*=.*|color_theme = "omarchy"|' "$HOME/.config/btop/btop.conf"
+    else
+      printf '\ncolor_theme = "omarchy"\n' >>"$HOME/.config/btop/btop.conf"
+    fi
+  else
+    printf 'color_theme = "omarchy"\n' >"$HOME/.config/btop/btop.conf"
+  fi
+fi
+
+icon_theme="$(cat "$theme_dir/icons.theme" 2>/dev/null || true)"
+if [[ -n "$icon_theme" ]]; then
+  if [[ ! -d "/usr/share/icons/$icon_theme" && ! -d "$HOME/.icons/$icon_theme" && ! -d "$HOME/.local/share/icons/$icon_theme" ]]; then
+    case "$icon_theme" in
+      Yaru-blue) icon_theme="Tela-circle-blue" ;;
+      Yaru-sage|Yaru-sage-dark) icon_theme="Tela-circle-green" ;;
+      Yaru-purple) icon_theme="Tela-circle-purple" ;;
+      Yaru-magenta) icon_theme="Tela-circle-pink" ;;
+      Yaru-red) icon_theme="Tela-circle-red" ;;
+      Yaru-yellow) icon_theme="Tela-circle-yellow" ;;
+      Yaru-olive) icon_theme="Tela-circle-green" ;;
+      Yaru-wartybrown) icon_theme="Tela-circle-brown" ;;
+      Yaru-gray|Yaru-grey) icon_theme="Tela-circle-grey" ;;
+      *) icon_theme="$(awk -F= '/^gtk-icon-theme-name=/ { print $2; exit }' "$HOME/.config/omarchy/default-theme/gtk-3-settings.ini")" ;;
+    esac
+  fi
+
+  awk -v icon="$icon_theme" '
+    BEGIN { done = 0 }
+    /^gtk-icon-theme-name=/ { print "gtk-icon-theme-name=" icon; done = 1; next }
+    { print }
+    END { if (!done) print "gtk-icon-theme-name=" icon }
+  ' "$HOME/.config/omarchy/default-theme/gtk-3-settings.ini" >"$HOME/.config/gtk-3.0/settings.ini"
+
+  awk -v icon="$icon_theme" '
+    BEGIN { done = 0 }
+    /^gtk-icon-theme-name=/ { print "gtk-icon-theme-name=" icon; done = 1; next }
+    { print }
+    END { if (!done) print "gtk-icon-theme-name=" icon }
+  ' "$HOME/.config/omarchy/default-theme/gtk-4-settings.ini" >"$HOME/.config/gtk-4.0/settings.ini"
+
+  awk -v icon="$icon_theme" '
+    /^Net\/IconThemeName / { print "Net/IconThemeName \"" icon "\""; next }
+    { print }
+  ' "$HOME/.config/omarchy/default-theme/xsettingsd.conf" >"$HOME/.config/xsettingsd/xsettingsd.conf"
+
+  gsettings set org.gnome.desktop.interface icon-theme "$icon_theme" >/dev/null 2>&1 || true
+fi
+
+if ! grep -qxF 'source = ~/.config/omarchy/generated/hyprland-theme.conf' "$HOME/.config/hypr/hyprland.conf"; then
+  printf '\n# Omarchy theme overrides\nsource = ~/.config/omarchy/generated/hyprland-theme.conf\n' >>"$HOME/.config/hypr/hyprland.conf"
+fi
+
+"$HOME/.config/hypr/omarchy-wallpaper-next" --theme-random >/dev/null 2>&1 || true
+
+if pgrep -x waybar >/dev/null; then
+  pkill waybar
+  waybar >/tmp/waybar.log 2>&1 &
+fi
+
+if pgrep -x mako >/dev/null; then
+  makoctl reload >/dev/null 2>&1 || pkill mako
+fi
+
+if pgrep -x swayosd-server >/dev/null; then
+  pkill swayosd-server
+  swayosd-server >/tmp/swayosd.log 2>&1 &
+fi
+
+hyprctl reload >/dev/null 2>&1 || true
+touch "$HOME/.config/alacritty/alacritty.toml"
+
+if [[ -f "$theme_dir/chromium.theme" ]]; then
+  browser_rgb="$(tr -d '[:space:]' <"$theme_dir/chromium.theme")"
+elif [[ -n "${background:-}" ]]; then
+  browser_rgb="$(printf '%d,%d,%d' "0x${background:1:2}" "0x${background:3:2}" "0x${background:5:2}")"
+else
+  browser_rgb="28,32,39"
+fi
+
+browser_hex="$(printf '#%02x%02x%02x' ${browser_rgb//,/ })"
+printf '{"BrowserThemeColor": "%s", "BrowserColorScheme": "device"}\n' "$browser_hex" >"$generated_dir/browser-color.json"
+for policy_dir in /etc/chromium/policies/managed /etc/opt/chrome/policies/managed /etc/opt/edge/policies/managed /etc/brave/policies/managed; do
+  if [[ -d "$policy_dir" && -w "$policy_dir" ]]; then
+    ln -sfn "$generated_dir/browser-color.json" "$policy_dir/omarchy-color.json"
+  fi
+done
+
+for browser in chromium google-chrome google-chrome-stable microsoft-edge microsoft-edge-stable brave; do
+  command -v "$browser" >/dev/null 2>&1 && "$browser" --refresh-platform-policy --no-startup-window >/dev/null 2>&1 || true
+done
+
+echo "Applied Omarchy theme: $theme"
+notify-send -a Theme "Theme applied" "$theme" 2>/dev/null || true

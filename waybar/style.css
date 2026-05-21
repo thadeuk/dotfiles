@@ -209,5 +209,70 @@ tooltip {
 
 
 /* Omarchy theme overrides */
-@define-color foreground #F8F8F2;
-@define-color background #282A36;
+window#waybar {
+    color: #ddf7ff;
+}
+
+tooltip,
+#custom-tlp,
+#custom-power_profile,
+#custom-weather-current,
+#custom-weather-rouen,
+#custom-moon,
+#custom-wallpaper,
+#cpu,
+#window,
+#clock,
+#custom-battery,
+#pulseaudio,
+#network,
+#bluetooth,
+#temperature,
+#memory,
+#workspaces,
+#tray,
+#backlight {
+    background: #0B0C16;
+    border-color: #3E4058;
+}
+
+#workspaces button {
+    color: #6a6e95;
+}
+
+#workspaces button.focused,
+#workspaces button.active,
+#entry:selected {
+    background-color: #3E4058;
+    color: #82FB9C;
+}
+
+#memory,
+#pulseaudio.microphone {
+    color: #86a7df;
+}
+
+#temperature,
+#custom-weather-rouen,
+#bluetooth,
+#pulseaudio {
+    color: #7cf8f7;
+}
+
+#clock {
+    color: #50f7d4;
+}
+
+#network {
+    color: #a4ffec;
+}
+
+#custom-power_profile,
+#custom-battery,
+#custom-tlp {
+    color: #4fe88f;
+}
+
+#cpu {
+    color: #cddbf4;
+}

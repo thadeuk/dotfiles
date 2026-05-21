@@ -53,3 +53,5 @@ fi
 for m in "${monitors[@]}"; do
   hyprctl hyprpaper wallpaper "$m, $path, cover" >/dev/null
 done
+
+notify-send -a Wallpaper "Wallpaper changed" "${label% ●}"

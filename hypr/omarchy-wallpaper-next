@@ -91,3 +91,8 @@ else
     hyprctl hyprpaper wallpaper "$monitor, $next, cover" >/dev/null
   done
 fi
+
+# Notify with "<theme>/<file>" (or just the filename if outside a themes dir).
+label=${next#"$themes_dir/"}
+label=${label/\/backgrounds\//\/}
+notify-send -a Wallpaper "Wallpaper changed" "$label" 2>/dev/null || true
