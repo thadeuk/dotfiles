@@ -1,75 +1,78 @@
 #!/usr/bin/env bash
-# Sync Omarchy themes: clone missing ones and update existing ones.
+# Sync Omarchy themes from the manifest at ~/.config/omarchy/themes.manifest.
 #
-# Reads ~/.config/omarchy/themes.manifest (one "<name> <git-url>" per line).
-# For each entry:
-#   - missing      → git clone
-#   - exists + git → git pull --ff-only
-#   - exists, no .git → skip (treated as locally-managed)
+# Manifest entries:
+#   <name>                 → copy from cached basecamp/omarchy clone (themes/<name>)
+#   <name> basecamp        → same, explicit
+#   <name> <git-url>       → clone (and `git pull --ff-only` thereafter)
 #
-# Additionally, any git-cloned theme on disk that's not in the manifest is also
-# pulled, so themes added outside the manifest stay current.
+# basecamp/omarchy is cached at ~/.cache/omarchy-upstream so the script can
+# re-copy themes without re-downloading. Each run pulls the cache to update.
 
 set -euo pipefail
 
 THEMES_DIR="$HOME/.config/omarchy/themes"
 MANIFEST="$HOME/.config/omarchy/themes.manifest"
+CACHE="$HOME/.cache/omarchy-upstream"
+UPSTREAM_URL="https://github.com/basecamp/omarchy"
 
+[[ -f "$MANIFEST" ]] || { echo "manifest not found: $MANIFEST" >&2; exit 1; }
 mkdir -p "$THEMES_DIR"
 
-if [[ ! -f "$MANIFEST" ]]; then
-  echo "manifest not found: $MANIFEST" >&2
-  exit 1
-fi
-
-cloned=0
-updated=0
-skipped=0
-unlisted_updated=0
-
-# Pass 1: process every manifest entry
-while IFS=' ' read -r name url; do
-  # Skip blank lines and comments
-  [[ -z "${name// }" ]] && continue
-  [[ "$name" == \#* ]] && continue
-  if [[ -z "${url:-}" ]]; then
-    echo "[warn]  $name has no URL — skipping" >&2
-    continue
-  fi
-
-  target="$THEMES_DIR/$name"
-
-  if [[ -d "$target/.git" ]]; then
-    echo "[pull]  $name"
-    if git -C "$target" pull --ff-only --quiet; then
-      ((++updated))
-    else
-      echo "[error] $name pull failed (non-fast-forward or conflict)" >&2
-    fi
-  elif [[ -d "$target" ]]; then
-    echo "[skip]  $name (exists, no .git)"
-    ((++skipped))
-  else
-    echo "[clone] $name ← $url"
-    if git clone --depth=1 --quiet "$url" "$target"; then
-      ((++cloned))
-    else
-      echo "[error] $name clone failed" >&2
-    fi
+# Does any manifest entry need the upstream cache?
+need_upstream=0
+while IFS=' ' read -r name src _rest; do
+  [[ -z "${name// }" || "$name" == \#* ]] && continue
+  if [[ -z "${src:-}" || "$src" == "basecamp" ]]; then
+    need_upstream=1
+    break
   fi
 done < "$MANIFEST"
 
-# Pass 2: any git-cloned theme on disk that's not in the manifest
-for dir in "$THEMES_DIR"/*/; do
-  [[ -d "$dir/.git" ]] || continue
-  name=$(basename "$dir")
-  if ! awk -v n="$name" '$1 == n { found = 1; exit } END { exit !found }' "$MANIFEST" 2>/dev/null; then
-    echo "[pull*] $name (not in manifest)"
-    if git -C "$dir" pull --ff-only --quiet; then
-      ((++unlisted_updated))
-    fi
+if (( need_upstream )); then
+  if [[ -d "$CACHE/.git" ]]; then
+    echo "[cache] pulling basecamp/omarchy"
+    git -C "$CACHE" pull --ff-only --quiet
+  else
+    echo "[cache] cloning basecamp/omarchy → $CACHE"
+    git clone --depth=1 --quiet "$UPSTREAM_URL" "$CACHE"
   fi
-done
+fi
 
-printf '\nsummary: cloned=%d  pulled=%d  unlisted-pulled=%d  no-git-skipped=%d\n' \
-  "$cloned" "$updated" "$unlisted_updated" "$skipped"
+cloned=0; copied=0; pulled=0; skipped=0; missing=0
+
+while IFS=' ' read -r name src _rest; do
+  [[ -z "${name// }" || "$name" == \#* ]] && continue
+  target="$THEMES_DIR/$name"
+
+  # Upstream basecamp/omarchy theme
+  if [[ -z "${src:-}" || "$src" == "basecamp" ]]; then
+    upstream_dir="$CACHE/themes/$name"
+    if [[ ! -d "$upstream_dir" ]]; then
+      echo "[error] $name: not in basecamp/omarchy/themes/" >&2
+      ((++missing))
+      continue
+    fi
+    rm -rf "$target"
+    cp -r "$upstream_dir" "$target"
+    echo "[copy]  $name (basecamp)"
+    ((++copied))
+    continue
+  fi
+
+  # Standalone-repo theme
+  url="$src"
+  if [[ -d "$target/.git" ]]; then
+    echo "[pull]  $name"
+    if git -C "$target" pull --ff-only --quiet; then ((++pulled)); fi
+  elif [[ -d "$target" ]]; then
+    echo "[skip]  $name (exists, not a clone)"
+    ((++skipped))
+  else
+    echo "[clone] $name ← $url"
+    if git clone --depth=1 --quiet "$url" "$target"; then ((++cloned)); fi
+  fi
+done < "$MANIFEST"
+
+printf '\nsummary: cloned=%d  copied=%d  pulled=%d  skipped=%d  missing-upstream=%d\n' \
+  "$cloned" "$copied" "$pulled" "$skipped" "$missing"

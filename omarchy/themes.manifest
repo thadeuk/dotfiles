@@ -1,8 +1,37 @@
-# Omarchy themes manifest
-# One theme per line: <name> <git-url>
-# - Lines starting with # are comments.
-# - The script clones missing themes and `git pull`s existing ones.
-# - Themes already on disk that lack a .git/ directory are left alone.
+# Omarchy themes manifest.
+#
+# Format, one entry per line:
+#   <name>                     fetched from upstream basecamp/omarchy (themes/<name>)
+#   <name> basecamp            same as above, explicit
+#   <name> <git-url>           cloned from a specific git URL (kept as a clone)
+#
+# Lines starting with # are comments.
 
-aetheria       https://github.com/JJDizz1L/aetheria.git
-aura           https://github.com/bjarneo/omarchy-aura-theme
+# --- Standalone repos ---
+aetheria  https://github.com/JJDizz1L/aetheria.git
+aura      https://github.com/bjarneo/omarchy-aura-theme
+
+# --- Upstream basecamp/omarchy themes ---
+catppuccin
+catppuccin-latte
+ethereal
+everforest
+flexoki-light
+gruvbox
+hackerman
+kanagawa
+lumon
+matte-black
+miasma
+nord
+osaka-jade
+retro-82
+ristretto
+rose-pine
+tokyo-night
+vantablack
+white
+
+# --- Not in basecamp/omarchy upstream — add a URL or leave commented ---
+# last-horizon
+# solitude
