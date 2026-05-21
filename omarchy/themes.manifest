@@ -1,0 +1,8 @@
+# Omarchy themes manifest
+# One theme per line: <name> <git-url>
+# - Lines starting with # are comments.
+# - The script clones missing themes and `git pull`s existing ones.
+# - Themes already on disk that lack a .git/ directory are left alone.
+
+aetheria       https://github.com/JJDizz1L/aetheria.git
+aura           https://github.com/bjarneo/omarchy-aura-theme

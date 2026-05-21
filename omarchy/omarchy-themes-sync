@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Sync Omarchy themes: clone missing ones and update existing ones.
+#
+# Reads ~/.config/omarchy/themes.manifest (one "<name> <git-url>" per line).
+# For each entry:
+#   - missing      → git clone
+#   - exists + git → git pull --ff-only
+#   - exists, no .git → skip (treated as locally-managed)
+#
+# Additionally, any git-cloned theme on disk that's not in the manifest is also
+# pulled, so themes added outside the manifest stay current.
+
+set -euo pipefail
+
+THEMES_DIR="$HOME/.config/omarchy/themes"
+MANIFEST="$HOME/.config/omarchy/themes.manifest"
+
+mkdir -p "$THEMES_DIR"
+
+if [[ ! -f "$MANIFEST" ]]; then
+  echo "manifest not found: $MANIFEST" >&2
+  exit 1
+fi
+
+cloned=0
+updated=0
+skipped=0
+unlisted_updated=0
+
+# Pass 1: process every manifest entry
+while IFS=' ' read -r name url; do
+  # Skip blank lines and comments
+  [[ -z "${name// }" ]] && continue
+  [[ "$name" == \#* ]] && continue
+  if [[ -z "${url:-}" ]]; then
+    echo "[warn]  $name has no URL — skipping" >&2
+    continue
+  fi
+
+  target="$THEMES_DIR/$name"
+
+  if [[ -d "$target/.git" ]]; then
+    echo "[pull]  $name"
+    if git -C "$target" pull --ff-only --quiet; then
+      ((++updated))
+    else
+      echo "[error] $name pull failed (non-fast-forward or conflict)" >&2
+    fi
+  elif [[ -d "$target" ]]; then
+    echo "[skip]  $name (exists, no .git)"
+    ((++skipped))
+  else
+    echo "[clone] $name ← $url"
+    if git clone --depth=1 --quiet "$url" "$target"; then
+      ((++cloned))
+    else
+      echo "[error] $name clone failed" >&2
+    fi
+  fi
+done < "$MANIFEST"
+
+# Pass 2: any git-cloned theme on disk that's not in the manifest
+for dir in "$THEMES_DIR"/*/; do
+  [[ -d "$dir/.git" ]] || continue
+  name=$(basename "$dir")
+  if ! awk -v n="$name" '$1 == n { found = 1; exit } END { exit !found }' "$MANIFEST" 2>/dev/null; then
+    echo "[pull*] $name (not in manifest)"
+    if git -C "$dir" pull --ff-only --quiet; then
+      ((++unlisted_updated))
+    fi
+  fi
+done
+
+printf '\nsummary: cloned=%d  pulled=%d  unlisted-pulled=%d  no-git-skipped=%d\n' \
+  "$cloned" "$updated" "$unlisted_updated" "$skipped"
