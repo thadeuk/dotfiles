@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Toggle focus mode: zero gaps and rounding for a clean, distraction-free look.
+# Saves the current values so the toggle survives changes to hyprland.conf.
+
+set -euo pipefail
+
+STATE="${XDG_RUNTIME_DIR:-/tmp}/omarchy-focus-mode"
+
+# Parse hyprctl getoption output, returning just the value portion.
+#   "int: 5"               -> "5"
+#   "custom type: 3 3 3 3" -> "3 3 3 3"
+read_opt() {
+  hyprctl getoption "$1" | awk -F': ' '
+    /^int:/    { print $2; exit }
+    /^float:/  { print $2; exit }
+    /^custom/  { print $2; exit }
+  '
+}
+
+if [[ -f "$STATE" ]]; then
+  # shellcheck source=/dev/null
+  source "$STATE"
+  # Unquoted on purpose: gaps_in/gaps_out values can be "3 3 3 3" (Vec4).
+  hyprctl keyword general:gaps_in $GAPS_IN >/dev/null
+  hyprctl keyword general:gaps_out $GAPS_OUT >/dev/null
+  hyprctl keyword decoration:rounding $ROUNDING >/dev/null
+  rm -f "$STATE"
+  notify-send -a Focus "Focus mode off"
+else
+  {
+    echo "GAPS_IN=\"$(read_opt general:gaps_in)\""
+    echo "GAPS_OUT=\"$(read_opt general:gaps_out)\""
+    echo "ROUNDING=\"$(read_opt decoration:rounding)\""
+  } > "$STATE"
+  hyprctl keyword general:gaps_in 0 >/dev/null
+  hyprctl keyword general:gaps_out 0 >/dev/null
+  hyprctl keyword decoration:rounding 0 >/dev/null
+  notify-send -a Focus "Focus mode on"
+fi

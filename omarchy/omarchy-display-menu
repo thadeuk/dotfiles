@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Wofi menu to switch between display presets.
+# Preserves each monitor's current scale across preset switches.
+
+set -euo pipefail
+
+monitors_json=$(hyprctl monitors all -j)
+
+laptop=$(jq -r '.[] | select(.name | test("^eDP")) | .name' <<<"$monitors_json" | head -1)
+external=$(jq -r --arg laptop "$laptop" '.[] | select(.name != $laptop) | .name' <<<"$monitors_json" | head -1)
+
+if [[ -z "$laptop" ]]; then
+  notify-send -a Display "No internal panel detected"
+  exit 1
+fi
+
+if [[ -z "$external" ]]; then
+  notify-send -a Display "No external monitor connected"
+  exit 0
+fi
+
+laptop_scale=$(jq -r --arg n "$laptop" '.[] | select(.name == $n) | .scale' <<<"$monitors_json")
+external_scale=$(jq -r --arg n "$external" '.[] | select(.name == $n) | .scale' <<<"$monitors_json")
+
+choice=$(printf 'Mirror\nExtend right\nExtend left\nLaptop only\nExternal only\n' \
+  | wofi --dmenu --prompt "Display layout" -i)
+
+case "$choice" in
+  "Mirror")
+    hyprctl keyword monitor "$laptop,preferred,0x0,$laptop_scale" >/dev/null
+    hyprctl keyword monitor "$external,preferred,0x0,$external_scale,mirror,$laptop" >/dev/null
+    notify-send -a Display "Mirrored to $external"
+    ;;
+  "Extend right")
+    hyprctl keyword monitor "$laptop,preferred,0x0,$laptop_scale" >/dev/null
+    hyprctl keyword monitor "$external,preferred,auto-right,$external_scale" >/dev/null
+    notify-send -a Display "Extended ($external on right)"
+    ;;
+  "Extend left")
+    hyprctl keyword monitor "$external,preferred,0x0,$external_scale" >/dev/null
+    hyprctl keyword monitor "$laptop,preferred,auto-right,$laptop_scale" >/dev/null
+    notify-send -a Display "Extended ($external on left)"
+    ;;
+  "Laptop only")
+    hyprctl keyword monitor "$external,disable" >/dev/null
+    hyprctl keyword monitor "$laptop,preferred,0x0,$laptop_scale" >/dev/null
+    notify-send -a Display "Laptop only"
+    ;;
+  "External only")
+    hyprctl keyword monitor "$laptop,disable" >/dev/null
+    hyprctl keyword monitor "$external,preferred,0x0,$external_scale" >/dev/null
+    notify-send -a Display "External only ($external)"
+    ;;
+  *)
+    exit 0
+    ;;
+esac

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Wofi menu to pick an Omarchy theme.
+
+set -euo pipefail
+
+themes_dir="$HOME/.config/omarchy/themes"
+current_file="$HOME/.config/omarchy/current/theme.name"
+current=$(cat "$current_file" 2>/dev/null || true)
+
+choice=$(\ls "$themes_dir" | awk -v cur="$current" '
+  { marker = ($1 == cur) ? " ●" : ""; print $1 marker }
+' | wofi --dmenu --prompt "Theme" -i)
+
+[[ -z "$choice" ]] && exit 0
+
+name=${choice% ●}
+~/.config/omarchy/omarchy-theme-apply "$name"

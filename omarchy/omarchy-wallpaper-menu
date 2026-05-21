@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Wofi menu to pick a wallpaper across all Omarchy themes.
+# Mirrors how omarchy-wallpaper-next applies the result so a restart persists it.
+
+set -euo pipefail
+
+themes_dir="$HOME/.config/omarchy/themes"
+current_link="$HOME/.config/omarchy/current/background"
+hyprpaper_conf="$HOME/.config/hypr/hyprpaper.conf"
+
+current_path=$(readlink -f "$current_link" 2>/dev/null || true)
+
+# Build "<theme>/<file><marker>\t<full-path>" rows.
+selection=$(find -L "$themes_dir" -path '*/backgrounds/*' -type f \
+  \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \
+   -o -iname '*.webp' -o -iname '*.gif' -o -iname '*.bmp' \) \
+  2>/dev/null | sort | awk -v cur="$current_path" -v root="$themes_dir/" '{
+    short = $0
+    sub(root, "", short)
+    sub("/backgrounds/", "/", short)
+    marker = ($0 == cur) ? " ●" : ""
+    print short marker "\t" $0
+  }')
+
+if [[ -z "$selection" ]]; then
+  notify-send -a Wallpaper "No wallpapers found"
+  exit 1
+fi
+
+label=$(printf '%s\n' "$selection" | cut -f1 | wofi --dmenu --prompt "Wallpaper" -i)
+[[ -z "$label" ]] && exit 0
+
+path=$(printf '%s\n' "$selection" | awk -v l="$label" -F'\t' '$1 == l { print $2; exit }')
+[[ -z "$path" ]] && exit 0
+
+mkdir -p "$(dirname "$current_link")"
+ln -sfn "$path" "$current_link"
+
+mapfile -t monitors < <(hyprctl monitors | awk '/^Monitor / { print $2 }')
+
+{
+  echo "splash = false"
+  for m in "${monitors[@]}"; do
+    printf 'wallpaper {\n    monitor = %s\n    path = %s\n    fit_mode = cover\n}\n' "$m" "$path"
+  done
+} > "$hyprpaper_conf"
+
+if ! pgrep -x hyprpaper >/dev/null; then
+  setsid -f hyprpaper --config "$hyprpaper_conf" >/tmp/hyprpaper.log 2>&1
+  sleep 0.5
+fi
+
+for m in "${monitors[@]}"; do
+  hyprctl hyprpaper wallpaper "$m, $path, cover" >/dev/null
+done

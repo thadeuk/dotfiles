@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Cycle the focused monitor's scale through preset values.
+
+set -euo pipefail
+
+SCALES="1.00 1.25 1.33 1.50 1.60 1.75 2.00"
+
+focused=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
+current=$(hyprctl monitors -j | jq -r --arg n "$focused" '.[] | select(.name == $n) | .scale')
+
+# Pick the first preset strictly greater than current; wrap to the smallest otherwise.
+next=$(awk -v cur="$current" -v list="$SCALES" 'BEGIN {
+  n = split(list, s, " ")
+  for (i = 1; i <= n; i++) {
+    if (s[i] + 0 > cur + 0 + 0.001) { print s[i]; exit }
+  }
+  print s[1]
+}')
+
+hyprctl keyword monitor "$focused,preferred,auto,$next" >/dev/null
+notify-send -a Display "Scale: $next ($focused)"

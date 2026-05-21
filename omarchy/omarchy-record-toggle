@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Toggle full-screen recording with wf-recorder.
+# Sends SIGINT to flush the MP4 cleanly on stop.
+
+set -euo pipefail
+
+OUTDIR="${HOME}/Videos"
+mkdir -p "$OUTDIR"
+
+if pgrep -x wf-recorder >/dev/null; then
+  pkill -SIGINT -x wf-recorder
+  notify-send -a Recorder "Recording stopped" "Saved in $OUTDIR"
+else
+  # Pick the focused monitor — wf-recorder prompts interactively otherwise,
+  # which silently fails when launched from a keybind.
+  output=$(hyprctl monitors | awk '/^Monitor / { mon=$2 } /focused: yes/ { print mon; exit }')
+  outfile="$OUTDIR/recording-$(date +%Y%m%d-%H%M%S).mp4"
+  wf-recorder -o "$output" -f "$outfile" >/dev/null 2>&1 &
+  disown
+  notify-send -a Recorder "Recording started" "$output → $(basename "$outfile")"
+fi

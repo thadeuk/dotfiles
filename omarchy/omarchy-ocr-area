@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Select a region, OCR it with tesseract, copy the result to the clipboard.
+
+set -euo pipefail
+
+text=$(grim -g "$(slurp)" - | tesseract - - 2>/dev/null | sed -e 's/[[:space:]]*$//')
+
+if [[ -n "$text" ]]; then
+  printf '%s' "$text" | wl-copy
+  preview=$(printf '%s' "$text" | head -c 80)
+  notify-send -a OCR "Text copied" "$preview"
+else
+  notify-send -a OCR "No text detected"
+fi
