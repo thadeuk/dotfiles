@@ -1,7 +1,6 @@
 * {
     border: none;
     border-radius: 0;
-    /* font-family: "JetBrains Mono"; */
     font-family: "Iosevka Nerd Font";
     font-weight: bold;
     font-size: 14px;
@@ -20,6 +19,11 @@ tooltip {
     border-style: solid;
     border-color: #11111b;
 }
+
+tooltip label {
+    font-family: "Iosevka Nerd Font Mono";
+}
+
 
 #workspaces button {
     padding: 5px;
@@ -55,6 +59,8 @@ tooltip {
 #custom-weather-rouen,
 #custom-moon,
 #custom-wallpaper,
+#custom-claude,
+#custom-openai,
 #cpu,
 #window,
 #clock,
@@ -127,7 +133,6 @@ tooltip {
 #network {
     color: #f9e2af;
     border-radius: 10px 0px 0px 10px;
-    border-left: 0px;
     border-right: 0px;
 }
 
@@ -205,5 +210,21 @@ tooltip {
     color: #cdd6f4;
     border-radius: 0px 10px 10px 0px;
     border-left: 0px;
+}
+
+#custom-claude,
+#custom-openai {
+    padding: 0px 6px;
+}
+
+#custom-claude {
+    border-radius: 10px 0 0 10px;
+    border-right: 0px;
+}
+
+#custom-openai {
+    border-radius: 0 10px 10px 0;
+    border-left: 0px;
+    margin-right: 10px;
 }
 

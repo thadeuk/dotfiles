@@ -17,6 +17,8 @@
     "hyprland/window"
   ],
   "modules-right": [
+    "custom/claude",
+    "custom/openai",
     "network",
     "bluetooth",
     "temperature",
@@ -176,5 +178,18 @@
     "interval": 5,
     "return-type": "json",
     "on-click": "alacritty -e bash -lc 'tlp-stat -s; echo; echo Press any key...; read -n1'"
+  },
+  "custom/claude": {
+    "exec": "ai-usagebar --vendor anthropic --icon '󰚩' --format ''",
+    "return-type": "json",
+    "interval": 300,
+    "tooltip": true,
+    "on-click": "ai-usagebar-tui"
+  },
+  "custom/openai": {
+    "exec": "ai-usagebar --vendor openai --icon '󱢆' --format ''",
+    "return-type": "json",
+    "interval": 300,
+    "tooltip": true
   }
 }
