@@ -8,8 +8,9 @@
 # Lines starting with # are comments.
 
 # --- Standalone repos ---
-aetheria  https://github.com/JJDizz1L/aetheria.git
-aura      https://github.com/bjarneo/omarchy-aura-theme
+aetheria      https://github.com/JJDizz1L/aetheria.git
+aura          https://github.com/bjarneo/omarchy-aura-theme
+everblush     https://github.com/Swarnim114/omarchy-everblush-theme
 
 # --- Upstream basecamp/omarchy themes ---
 catppuccin
