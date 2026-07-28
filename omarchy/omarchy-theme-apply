@@ -21,7 +21,7 @@ if [[ ! -d "$theme_dir" ]]; then
 fi
 
 mkdir -p "$generated_dir" "$current_dir"
-rm -f "$generated_dir/alacritty.toml" "$generated_dir/waybar-overrides.css" "$generated_dir/mako-config" "$generated_dir/hyprland-theme.conf" "$generated_dir/wofi-style.css" "$generated_dir/gtk.css" "$generated_dir/btop.theme" "$generated_dir/swayosd.css" "$generated_dir/hyprlock-theme.conf"
+rm -f "$generated_dir/alacritty.toml" "$generated_dir/waybar-overrides.css" "$generated_dir/mako-config" "$generated_dir/hyprland-theme.lua" "$generated_dir/wofi-style.css" "$generated_dir/gtk.css" "$generated_dir/btop.theme" "$generated_dir/swayosd.css" "$generated_dir/hyprlock-theme.conf"
 echo "$theme" >"$current_dir/theme.name"
 ln -sfn "$theme_dir" "$current_dir/theme"
 
@@ -199,17 +199,21 @@ text-color=$color1
 default-timeout=0
 EOF
 
-  cat >"$generated_dir/hyprland-theme.conf" <<EOF
-general {
-    col.active_border = rgba(${accent#\#}ee)
-    col.inactive_border = rgba(${color0#\#}aa)
-}
+  cat >"$generated_dir/hyprland-theme.lua" <<EOF
+hl.config({
+    general = {
+        col = {
+            active_border   = "rgba(${accent#\#}ee)",
+            inactive_border = "rgba(${color0#\#}aa)",
+        },
+    },
 
-decoration {
-    shadow {
-        color = rgba(${background#\#}ee)
-    }
-}
+    decoration = {
+        shadow = {
+            color = "rgba(${background#\#}ee)",
+        },
+    },
+})
 EOF
 
   cat >"$generated_dir/wofi-style.css" <<EOF
@@ -382,8 +386,8 @@ if [[ ! -f "$generated_dir/swayosd.css" ]]; then
   cp "$HOME/.config/omarchy/default-theme/swayosd-style.css" "$generated_dir/swayosd.css"
 fi
 
-if [[ ! -f "$generated_dir/hyprland-theme.conf" ]]; then
-  : >"$generated_dir/hyprland-theme.conf"
+if [[ ! -f "$generated_dir/hyprland-theme.lua" ]]; then
+  : >"$generated_dir/hyprland-theme.lua"
 fi
 
 if [[ ! -f "$generated_dir/hyprlock-theme.conf" ]]; then
@@ -465,10 +469,6 @@ if [[ -n "$icon_theme" ]]; then
   ' "$HOME/.config/omarchy/default-theme/xsettingsd.conf" >"$HOME/.config/xsettingsd/xsettingsd.conf"
 
   gsettings set org.gnome.desktop.interface icon-theme "$icon_theme" >/dev/null 2>&1 || true
-fi
-
-if ! grep -qxF 'source = ~/.config/omarchy/generated/hyprland-theme.conf' "$HOME/.config/hypr/hyprland.conf"; then
-  printf '\n# Omarchy theme overrides\nsource = ~/.config/omarchy/generated/hyprland-theme.conf\n' >>"$HOME/.config/hypr/hyprland.conf"
 fi
 
 "$HOME/.config/hypr/omarchy-wallpaper-next" --theme-random >/dev/null 2>&1 || true

@@ -17,7 +17,7 @@ else
 fi
 mkdir -p "$HOME/.config/swayosd"
 cp "$snapshot_dir/swayosd-style.css" "$HOME/.config/swayosd/style.css"
-sed -i '/^# Omarchy theme overrides$/d;/^source = ~\/.config\/omarchy\/generated\/hyprland-theme\.conf$/d' "$HOME/.config/hypr/hyprland.conf"
+rm -f "$HOME/.config/omarchy/generated/hyprland-theme.lua"
 
 rm -f "$HOME/.config/gtk-3.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css" "$HOME/.config/btop/themes/omarchy.theme"
 ln -sfn /usr/share/themes/adw-gtk3-dark/gtk-4.0/gtk.css "$HOME/.config/gtk-4.0/gtk.css"

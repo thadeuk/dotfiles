@@ -1,0 +1,29 @@
+-- >>> murmur (managed: edit between markers) >>>
+-- Load this from hyprland.lua:  require("murmur")
+-- Wayland gives the compositor the keyboard, so the hotkey is a Hyprland bind that
+-- execs the murmur CLI, which pokes the running app over its control socket.
+-- Keys chosen to avoid the Omarchy defaults (which use SUPER+SHIFT+SPACE for the wallpaper menu and
+-- SUPER+SHIFT+S for scale-cycle): toggle on SUPER+/, everything else on the free SUPER+CTRL prefix.
+-- Use the FULL launcher path: Hyprland's bind-exec PATH does NOT include ~/.local/bin (that's only
+-- added in ~/.zshrc, which the compositor's launch never sources), so a bare `murmur` isn't found.
+-- `~` is expanded by the shell Hyprland runs the exec through. (`murmur install` puts it here.)
+
+hl.bind("SUPER + slash",  hl.dsp.exec_cmd("~/.local/bin/murmur --toggle"))               -- toggle the quick-capture window
+hl.bind("SUPER + CTRL + V", hl.dsp.exec_cmd("~/.local/bin/murmur --dictate"))            -- open + push-to-talk dictation
+hl.bind("SUPER + CTRL + S", hl.dsp.exec_cmd("~/.local/bin/murmur --capture select"))     -- region screenshot -> visual KB
+hl.bind("SUPER + CTRL + F", hl.dsp.exec_cmd("~/.local/bin/murmur --capture full"))       -- full-output screenshot -> visual KB
+hl.bind("SUPER + CTRL + R", hl.dsp.exec_cmd("~/.local/bin/murmur --rewrite tone-casual")) -- rewrite clipboard text (casual; pick another style in the panel)
+
+-- NO window rules: Murmur owns the panel's float, size, POSITION, and visibility itself (via
+-- `hyprctl dispatch`, using a title selector -- Electron's Wayland app_id is the shared "Electron",
+-- so title is the stable match). It opens top-right, remembers your last spot (resolution-resilient),
+-- and hides by parking on a hidden special workspace so it re-opens with no flash. The old decorative
+-- rules (float/size/dimaround/noborder/rounding/noanim/blur) are omitted: Hyprland 0.55 changed the
+-- windowrule matcher grammar and they errored ("invalid field ..."), and they were cosmetic only.
+-- (Trade-off vs the old `pin`: an open panel doesn't follow you across workspaces -- it opens on
+-- whichever workspace you invoke it from.)
+
+-- Tray: add "tray" to your waybar modules-right and reload waybar (it is the SNI host).
+-- Optional: start Murmur resident at login instead of lazy first-launch.
+-- hl.on("hyprland.start", function() hl.exec_cmd("murmur --background --ozone-platform=wayland --class=ai.murmur.quickcapture") end)
+-- <<< murmur <<<
