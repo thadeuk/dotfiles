@@ -1,9 +1,9 @@
 font=JetBrains Mono Nerd Font 11
 
-background-color=#1f1f28
-text-color=#dcd7ba
-border-color=#7e9cd8
-progress-color=#7e9cd8
+background-color=#16242d
+text-color=#d6e2ee
+border-color=#8bc9eb
+progress-color=#8bc9eb
 
 width=360
 height=120
@@ -22,14 +22,14 @@ icons=1
 max-icon-size=48
 
 [urgency=low]
-border-color=#76946a
-text-color=#76946a
+border-color=#5e95bc
+text-color=#5e95bc
 
 [urgency=normal]
-border-color=#7e9cd8
-text-color=#dcd7ba
+border-color=#8bc9eb
+text-color=#d6e2ee
 
 [urgency=high]
-border-color=#c34043
-text-color=#c34043
+border-color=#4d86b0
+text-color=#4d86b0
 default-timeout=0

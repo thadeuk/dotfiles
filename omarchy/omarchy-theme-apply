@@ -27,12 +27,29 @@ ln -sfn "$theme_dir" "$current_dir/theme"
 
 colors_file="$theme_dir/colors.toml"
 if [[ -f "$colors_file" ]]; then
+  # Semantic colors.toml (omacom/omarchy schema) has named colors instead of
+  # color0..15 and no cursor. Same mapping as upstream omarchy-theme-color.
+  declare -A semantic_alias=(
+    [color0]=background [color1]=red [color2]=green [color3]=yellow
+    [color4]=blue [color5]=magenta [color6]=cyan [color7]=foreground
+    [color8]=muted [color9]=bright_red [color10]=bright_green
+    [color11]=bright_yellow [color12]=bright_blue [color13]=bright_magenta
+    [color14]=bright_cyan [color15]=bright_foreground [cursor]=bright_foreground
+  )
+
   get_color() {
-    awk -F= -v key="$1" '$1 ~ "^[[:space:]]*" key "[[:space:]]*$" {
+    local color
+    color="$(awk -F= -v key="$1" '$1 ~ "^[[:space:]]*" key "[[:space:]]*$" {
       gsub(/[[:space:]"'\''#]/, "", $2)
       print "#" $2
       exit
-    }' "$colors_file"
+    }' "$colors_file")"
+
+    if [[ -z "$color" && -n "${semantic_alias[$1]:-}" ]]; then
+      color="$(get_color "${semantic_alias[$1]}")"
+    fi
+
+    echo "$color"
   }
 
   background="$(get_color background)"

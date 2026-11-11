@@ -12,6 +12,24 @@ aetheria      https://github.com/JJDizz1L/aetheria.git
 aura          https://github.com/bjarneo/omarchy-aura-theme
 everblush     https://github.com/Swarnim114/omarchy-everblush-theme
 
+# --- Top community themes (manual's extra-themes list, ≥45 stars) ---
+retropc        https://github.com/rondilley/omarchy-retropc-theme
+ayaka          https://github.com/abhijeet-swami/omarchy-ayaka-theme
+void           https://github.com/vyrx-dev/omarchy-void-theme
+felix          https://github.com/TyRichards/omarchy-felix-theme
+one-dark-pro   https://github.com/sc0ttman/omarchy-one-dark-pro-theme
+mechanoonna    https://github.com/HANCORE-linux/omarchy-mechanoonna-theme
+blackturq      https://github.com/HANCORE-linux/omarchy-blackturq-theme
+blackgold      https://github.com/HANCORE-linux/omarchy-blackgold-theme
+city-783       https://github.com/OldJobobo/omarchy-city-783-theme
+rose-pine-dark https://github.com/guilhermetk/omarchy-rose-pine-dark
+ash            https://github.com/bjarneo/omarchy-ash-theme
+mars           https://github.com/steve-lohmeyer/omarchy-mars-theme
+space-monkey   https://github.com/TyRichards/omarchy-space-monkey-theme
+rainy-night    https://github.com/atif-1402/omarchy-rainynight-theme
+midnight       https://github.com/JaxonWright/omarchy-midnight-theme
+harbor-dark    https://github.com/HANCORE-linux/omarchy-harbordark-theme
+
 # --- Upstream basecamp/omarchy themes ---
 catppuccin
 catppuccin-latte

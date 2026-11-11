@@ -17,5 +17,6 @@ next=$(awk -v cur="$current" -v list="$SCALES" 'BEGIN {
   print s[1]
 }')
 
-hyprctl keyword monitor "$focused,preferred,auto,$next" >/dev/null
+# Lua config refuses `hyprctl keyword`; set the monitor through `hyprctl eval`.
+hyprctl eval "hl.monitor({ output = \"$focused\", mode = \"preferred\", position = \"auto\", scale = $next })" >/dev/null
 notify-send -a Display "Scale: $next ($focused)"

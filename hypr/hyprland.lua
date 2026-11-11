@@ -50,6 +50,10 @@ end)
 
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
+-- Legacy DRM: atomic modesetting wedges eDP after lid-resume (aquamarine#307)
+hl.env("AQ_NO_ATOMIC", "1")
+-- No SCHED_RR: 0.57 RLIMIT_RTTIME hard limit (200ms) SIGKILLs Hyprland silently
+hl.env("HYPRLAND_NO_RT", "1")
 
 
 -----------------------
@@ -210,59 +214,73 @@ hl.device({
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
-hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal), { description = "Terminal" })
 
-hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
-hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd([[printf "Cancel\nExit\n" | wofi --dmenu --prompt "Exit Hyprland?" | grep -qx "Exit" && hyprctl dispatch exit]]))
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("wofi --show run"))
-hl.bind(mainMod .. " + P", hl.dsp.window.pseudo()) -- dwindle
+hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close(), { description = "Close window" })
+hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd([[printf "Cancel\nExit\n" | wofi --dmenu --prompt "Exit Hyprland?" | grep -qx "Exit" && hyprctl dispatch 'hl.dsp.exit()']]), { description = "Exit Hyprland" })
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(fileManager), { description = "File manager" })
+hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle floating" })
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu), { description = "App launcher" })
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("wofi --show run"), { description = "Run command" })
+hl.bind(mainMod .. " + P", hl.dsp.window.pseudo(), { description = "Pseudo-tile window" }) -- dwindle
 -- Fullscreen toggle
-hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen(), { description = "Fullscreen" })
 -- Floating toggle
-hl.bind(mainMod .. " + Space", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + Space", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle floating" })
 -- Omarchy wallpaper rotation
-hl.bind(mainMod .. " + CTRL + SPACE", hl.dsp.exec_cmd("~/.config/hypr/omarchy-wallpaper-next"))
+hl.bind(mainMod .. " + CTRL + SPACE", hl.dsp.exec_cmd("~/.config/hypr/omarchy-wallpaper-next"), { description = "Next wallpaper" })
 
 -- Wallpaper picker
-hl.bind(mainMod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-wallpaper-menu"))
+hl.bind(mainMod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-wallpaper-menu"), { description = "Wallpaper picker" })
 -- Omarchy theme rotation
-hl.bind(mainMod .. " + CTRL + T", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-theme-next"))
+hl.bind(mainMod .. " + CTRL + T", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-theme-next"), { description = "Next theme" })
 
 -- Omarchy theme picker
-hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-theme-menu"))
+hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-theme-menu"), { description = "Theme picker" })
 
 -- Lock screen
-hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("hyprlock"), { description = "Lock screen" })
 
 -- Area screenshot for normal captures
-hl.bind("PRINT", hl.dsp.exec_cmd([[grim -s 1 -g "$(slurp)" - | swappy -f -]]))
+hl.bind("PRINT", hl.dsp.exec_cmd([[grim -s 1 -g "$(slurp)" - | swappy -f -]]), { description = "Screenshot area" })
 
 -- Full-screen capture, then crop/edit the frozen image in Satty
-hl.bind("CTRL + PRINT", hl.dsp.exec_cmd("grim -s 1 - | satty --filename - --fullscreen --initial-tool crop --copy-command wl-copy"))
+hl.bind("CTRL + PRINT", hl.dsp.exec_cmd("grim -s 1 - | satty --filename - --fullscreen --initial-tool crop --copy-command wl-copy"), { description = "Screenshot and edit" })
 
 -- Toggle screen recording (wf-recorder)
-hl.bind(mainMod .. " + SHIFT + PRINT", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-record-toggle"))
+hl.bind(mainMod .. " + SHIFT + PRINT", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-record-toggle"), { description = "Toggle screen recording" })
 
 -- OCR an area to clipboard
-hl.bind(mainMod .. " + CTRL + PRINT", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-ocr-area"))
+hl.bind(mainMod .. " + CTRL + PRINT", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-ocr-area"), { description = "OCR area to clipboard" })
 
 -- Toggle waybar visibility
-hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill -SIGUSR1 waybar"))
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill -SIGUSR1 waybar"), { description = "Toggle waybar" })
 
 -- Toggle zen mode (zero gaps + rounding)
-hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-focus-toggle"))
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-focus-toggle"), { description = "Toggle zen mode" })
 
 -- Display preset menu
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-display-menu"))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-display-menu"), { description = "Display presets" })
 
 -- Cycle scale on focused monitor
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-scale-cycle"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-scale-cycle"), { description = "Cycle monitor scale" })
 
 -- Audio output switcher
-hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-audio-output"))
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-audio-output"), { description = "Audio output" })
+
+-- Searchable keybindings menu (lists binds with a description)
+hl.bind(mainMod .. " + K", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-menu-keybindings"), { description = "Keybindings" })
+
+-- Toggle nightlight (gammastep 4000K)
+hl.bind(mainMod .. " + CTRL + N", hl.dsp.exec_cmd("~/.config/omarchy/omarchy-toggle-nightlight"), { description = "Toggle nightlight" })
+
+-- Pick a screen color to clipboard
+hl.bind(mainMod .. " + PRINT", hl.dsp.exec_cmd("pkill hyprpicker || hyprpicker -a -n"), { description = "Color picker" })
+
+-- Focus the app if already open, else launch it
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd([[~/.config/omarchy/omarchy-launch-or-focus "^signal$" signal-desktop]]), { description = "Signal" })
+hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd([[~/.config/omarchy/omarchy-launch-or-focus "^slack$" slack]]), { description = "Slack" })
+hl.bind(mainMod .. " + SHIFT + SLASH", hl.dsp.exec_cmd([[~/.config/omarchy/omarchy-launch-or-focus "^1password$" 1password]]), { description = "1Password" })
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
@@ -284,7 +302,7 @@ for i = 1, 10 do
 end
 
 -- Move workspace to next monitor
-hl.bind(mainMod .. " + SHIFT + P", hl.dsp.workspace.move({ monitor = "+1" }))
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.workspace.move({ monitor = "+1" }), { description = "Move workspace to next monitor" })
 
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))

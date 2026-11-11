@@ -22,33 +22,40 @@ fi
 laptop_scale=$(jq -r --arg n "$laptop" '.[] | select(.name == $n) | .scale' <<<"$monitors_json")
 external_scale=$(jq -r --arg n "$external" '.[] | select(.name == $n) | .scale' <<<"$monitors_json")
 
+# Lua config refuses `hyprctl keyword`; monitors are set through `hyprctl eval`.
+#   set_monitor DP-1 'mode = "preferred", position = "auto-right", scale = 1.33'
+#   set_monitor DP-1 'disabled = true'
+set_monitor() {
+  hyprctl eval "hl.monitor({ output = \"$1\", $2 })" >/dev/null
+}
+
 choice=$(printf 'Mirror\nExtend right\nExtend left\nLaptop only\nExternal only\n' \
   | wofi --dmenu --prompt "Display layout" -i)
 
 case "$choice" in
   "Mirror")
-    hyprctl keyword monitor "$laptop,preferred,0x0,$laptop_scale" >/dev/null
-    hyprctl keyword monitor "$external,preferred,0x0,$external_scale,mirror,$laptop" >/dev/null
+    set_monitor "$laptop" "mode = \"preferred\", position = \"0x0\", scale = $laptop_scale"
+    set_monitor "$external" "mode = \"preferred\", position = \"0x0\", scale = $external_scale, mirror = \"$laptop\""
     notify-send -a Display "Mirrored to $external"
     ;;
   "Extend right")
-    hyprctl keyword monitor "$laptop,preferred,0x0,$laptop_scale" >/dev/null
-    hyprctl keyword monitor "$external,preferred,auto-right,$external_scale" >/dev/null
+    set_monitor "$laptop" "mode = \"preferred\", position = \"0x0\", scale = $laptop_scale"
+    set_monitor "$external" "mode = \"preferred\", position = \"auto-right\", scale = $external_scale"
     notify-send -a Display "Extended ($external on right)"
     ;;
   "Extend left")
-    hyprctl keyword monitor "$external,preferred,0x0,$external_scale" >/dev/null
-    hyprctl keyword monitor "$laptop,preferred,auto-right,$laptop_scale" >/dev/null
+    set_monitor "$external" "mode = \"preferred\", position = \"0x0\", scale = $external_scale"
+    set_monitor "$laptop" "mode = \"preferred\", position = \"auto-right\", scale = $laptop_scale"
     notify-send -a Display "Extended ($external on left)"
     ;;
   "Laptop only")
-    hyprctl keyword monitor "$external,disable" >/dev/null
-    hyprctl keyword monitor "$laptop,preferred,0x0,$laptop_scale" >/dev/null
+    set_monitor "$external" "disabled = true"
+    set_monitor "$laptop" "mode = \"preferred\", position = \"0x0\", scale = $laptop_scale"
     notify-send -a Display "Laptop only"
     ;;
   "External only")
-    hyprctl keyword monitor "$laptop,disable" >/dev/null
-    hyprctl keyword monitor "$external,preferred,0x0,$external_scale" >/dev/null
+    set_monitor "$laptop" "disabled = true"
+    set_monitor "$external" "mode = \"preferred\", position = \"0x0\", scale = $external_scale"
     notify-send -a Display "External only ($external)"
     ;;
   *)

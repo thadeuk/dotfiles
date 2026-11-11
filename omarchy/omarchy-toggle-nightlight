@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# omarchy:summary=Toggle nightlight screen temperature
+
+# Uses gammastep (wlr gamma control): hyprsunset's CTM never reaches DRM
+# on Hyprland 0.56 (hyprwm/Hyprland#16025). Gamma resets when gammastep
+# exits, so it keeps running while nightlight is on.
+
+ON_TEMP=4000
+
+if pkill -x gammastep; then
+  notify-send -u low "   Daylight screen temperature"
+  exit 0
+fi
+
+setsid -f gammastep -m wayland -O $ON_TEMP >/tmp/gammastep.log 2>&1
+notify-send -u low "  Nightlight screen temperature"

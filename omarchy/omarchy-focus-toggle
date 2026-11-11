@@ -8,22 +8,35 @@ STATE="${XDG_RUNTIME_DIR:-/tmp}/omarchy-focus-mode"
 
 # Parse hyprctl getoption output, returning just the value portion.
 #   "int: 5"               -> "5"
-#   "custom type: 3 3 3 3" -> "3 3 3 3"
+#   "css gap data: 3 3 3 3" -> "3 3 3 3"
 read_opt() {
   hyprctl getoption "$1" | awk -F': ' '
     /^int:/    { print $2; exit }
     /^float:/  { print $2; exit }
-    /^custom/  { print $2; exit }
+    /^css gap/ { print $2; exit }
   '
+}
+
+# Lua config refuses `hyprctl keyword`; options go through `hyprctl eval`.
+#   set_opt general gaps_in "3 3 3 3" -> hl.config({ general = { gaps_in = {top=3,right=3,bottom=3,left=3} } })
+#   set_opt decoration rounding 0     -> hl.config({ decoration = { rounding = 0 } })
+set_opt() {
+  local val
+  read -r t r b l <<<"$3"
+  if [[ -n "${r:-}" ]]; then
+    val="{top=$t,right=$r,bottom=$b,left=$l}"
+  else
+    val="$t"
+  fi
+  hyprctl eval "hl.config({ $1 = { $2 = $val } })" >/dev/null
 }
 
 if [[ -f "$STATE" ]]; then
   # shellcheck source=/dev/null
   source "$STATE"
-  # Unquoted on purpose: gaps_in/gaps_out values can be "3 3 3 3" (Vec4).
-  hyprctl keyword general:gaps_in $GAPS_IN >/dev/null
-  hyprctl keyword general:gaps_out $GAPS_OUT >/dev/null
-  hyprctl keyword decoration:rounding $ROUNDING >/dev/null
+  set_opt general gaps_in "$GAPS_IN"
+  set_opt general gaps_out "$GAPS_OUT"
+  set_opt decoration rounding "$ROUNDING"
   rm -f "$STATE"
   notify-send -a Focus "Focus mode off"
 else
@@ -32,8 +45,8 @@ else
     echo "GAPS_OUT=\"$(read_opt general:gaps_out)\""
     echo "ROUNDING=\"$(read_opt decoration:rounding)\""
   } > "$STATE"
-  hyprctl keyword general:gaps_in 0 >/dev/null
-  hyprctl keyword general:gaps_out 0 >/dev/null
-  hyprctl keyword decoration:rounding 0 >/dev/null
+  set_opt general gaps_in "0"
+  set_opt general gaps_out "0"
+  set_opt decoration rounding "0"
   notify-send -a Focus "Focus mode on"
 fi

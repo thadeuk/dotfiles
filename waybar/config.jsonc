@@ -17,6 +17,7 @@
     "hyprland/window"
   ],
   "modules-right": [
+    "custom/murmur",
     "custom/claude",
     "custom/openai",
     "network",
@@ -31,9 +32,10 @@
   ],
   "hyprland/workspaces": {
     "format": "{icon}",
-    "on-scroll-up": "hyprctl dispatch workspace e+1",
-    "on-scroll-down": "hyprctl dispatch workspace e-1",
-    "persistent_workspaces": {
+    "on-click": "activate",
+    "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
+    "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
+    "persistent-workspaces": {
       "*": 1
     }
   },
@@ -178,6 +180,13 @@
     "interval": 5,
     "return-type": "json",
     "on-click": "alacritty -e bash -lc 'tlp-stat -s; echo; echo Press any key...; read -n1'"
+  },
+  "custom/murmur": {
+    "exec": "cat $XDG_RUNTIME_DIR/murmur/status.json 2>/dev/null",
+    "return-type": "json",
+    "signal": 9,
+    "interval": "once",
+    "tooltip": true
   },
   "custom/claude": {
     "exec": "ai-usagebar --vendor anthropic --icon '󰚩' --format ''",
