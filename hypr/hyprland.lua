@@ -38,6 +38,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("mako") -- notification daemon
     hl.exec_cmd("swayosd-server")
     hl.exec_cmd("copyq --start-server")
+    hl.exec_cmd("hypridle")
 end)
 
 
